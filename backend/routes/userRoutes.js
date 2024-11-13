@@ -5,7 +5,7 @@ import { createUser, getUsers, getUserById, updateUser, deleteUser } from '../co
 const router = express.Router();
 
 // Create a new user
-router.post('/user', createUser);
+router.post('/', createUser);
 
 // Get all users
 router.get('/users', getUsers);

@@ -16,32 +16,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { Checkbox } from "@/components/ui/checkbox"; // Adjust the path if needed
 
-interface ItemDetails {
-  quantity: number;
-  price: number;
-}
-
-interface CategoryItem {
-  _id: string;
-  itemName: string;
-}
-
-interface Category {
-  _id: string;
-  categoryName: string;
-  items: CategoryItem[];
-}
-
-interface OrderItems {
-  [category: string]: {
-    [item: string]: ItemDetails;
-  };
-}
-interface OrderItem {
-  item: string;
-  quantity: number;
-  price: number;
-}
+ 
 
 export function ComprehensiveOrderForm() {
   const [orderItems, setOrderItems] = useState<OrderItems>({});
@@ -115,12 +90,12 @@ export function ComprehensiveOrderForm() {
     const specialRequest = (
       document.getElementById("special") as HTMLInputElement
     )?.value;
-
+  
     if (!customerName || !phone || !mobile || (!xmasChecked && !nyeChecked)) {
       alert("Please fill all the required fields and acknowledge the terms!");
       return;
     }
-
+  
     const orderDetailsData = {
       orderNumber,
       customerName,
@@ -137,7 +112,7 @@ export function ComprehensiveOrderForm() {
       packagingFee: 10,
       total: calculateTotal(),
     };
-
+  
     Object.entries(orderItems).forEach(([category]) => {
       Object.entries(orderItems[category]).forEach(([item, details]) => {
         orderDetailsData.items.push({
@@ -147,44 +122,56 @@ export function ComprehensiveOrderForm() {
         });
       });
     });
-
-    const orderHistoryData = {
-      orderNumber,
-      name: orderDetailsData.customerName,
-      phone: orderDetailsData.phone,
-      orderTotal: orderDetailsData.total,
-      type: orderDetailsData.type,
+  
+    // Prepare user data to be sent
+    const userData = {
+      name: customerName,
+      phone,
+      mobile,
+      orders: [orderNumber], // Assigning the order number to the user
     };
-
+  
     try {
+      // First, submit user details
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users`, userData);
+  
+      // Then, submit order details
       await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order-details`,
         orderDetailsData
       );
       await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order-history`,
-        orderHistoryData
+        {
+          orderNumber,
+          name: orderDetailsData.customerName,
+          phone: orderDetailsData.phone,
+          orderTotal: orderDetailsData.total,
+          type: orderDetailsData.type,
+        }
       );
-
+  
       alert("Order submitted successfully!");
       setIsOrderSubmitted(true);
+  
+      // Display the order number
+      setTimeout(() => {
+        // Print the page after 2 seconds
+        window.print();
+  
+        // Refresh the page after printing
+        window.location.reload();
+      }, 2000);
+  
+       
     } catch (error) {
       console.error("Error submitting order:", error);
       alert("Failed to submit order. Please try again.");
     }
   };
-
+  
  
-
-  const clearFormData = () => {
-    setOrderItems({});
-    setOrderNumber(uuidv4());
-    (document.getElementById("customer-name") as HTMLInputElement).value = "";
-    (document.getElementById("phone") as HTMLInputElement).value = "";
-    (document.getElementById("mobile") as HTMLInputElement).value = "";
-    (document.getElementById("special") as HTMLInputElement).value = "";
-    
-  };
+ 
 
   return (
     
@@ -350,12 +337,7 @@ export function ComprehensiveOrderForm() {
               </CardContent>
               <CardFooter className="flex flex-col sm:flex-row gap-4">
                 <Button onClick={handleSubmit}>Submit Order</Button>
-                <Button onClick={() => window.print()} className="sm:ml-4">
-                  Print Order
-                </Button>
-                <Button onClick={clearFormData} className="sm:ml-4">
-                  Clear Data
-                </Button>
+             
               </CardFooter>
             </Card>
           </div>
