@@ -1,43 +1,54 @@
 import mongoose from "mongoose";
-import UserMaster from "./models/User.js";
+ 
 import Category from "./models/Category.js";
 import Item from "./models/Item.js";
-import OrderDetails from "./models/OrderDetails.js";
-import OrderHistory from "./models/OrderHistory.js";
+ 
+ 
 import dotenv from 'dotenv';
+dotenv.config();
 const itemsData = [
   { itemName: "Large Green King Prawns", sequenceNumber: 1 },
   { itemName: "Medium Green King Prawns", sequenceNumber: 2 },
   { itemName: "Green Prawn Cutlets", sequenceNumber: 3 },
-  { itemName: "Peeled Tail Off Prawns", sequenceNumber: 4 },
-  { itemName: "Banana Prawns", sequenceNumber: 5 },
-  { itemName: "Endeavour Prawns", sequenceNumber: 6 },
-  { itemName: "Large Cooked Tiger Prawns", sequenceNumber: 7 },
-  { itemName: "Medium Cooked Tiger Prawns", sequenceNumber: 8 },
-  { itemName: "Cooked Crystal Bay Prawns", sequenceNumber: 9 },
-  { itemName: "Cooked Endeavour Prawns", sequenceNumber: 10 },
-  { itemName: "Cooked Banana Prawns", sequenceNumber: 11 },
-  { itemName: "Australian Salmon", sequenceNumber: 12 },
-  { itemName: "Red Emperor", sequenceNumber: 13 },
-  { itemName: "Flathead", sequenceNumber: 14 },
-  { itemName: "Coral Trout", sequenceNumber: 15 },
-  { itemName: "Yellowtail Kingfish", sequenceNumber: 16 },
-  { itemName: "Atlantic Salmon", sequenceNumber: 17 },
-  { itemName: "Mud Crab", sequenceNumber: 18 },
-  { itemName: "Blue Swimmer Crab", sequenceNumber: 19 },
-  { itemName: "Snow Crab", sequenceNumber: 20 },
-  { itemName: "King Crab", sequenceNumber: 21 },
-  { itemName: "Australian Lobster", sequenceNumber: 22 },
-  { itemName: "Canadian Lobster", sequenceNumber: 23 },
-  { itemName: "Lobster Tails", sequenceNumber: 24 },
-  { itemName: "Sydney Rock Oysters", sequenceNumber: 25 },
-  { itemName: "Pacific Oysters", sequenceNumber: 26 },
-  { itemName: "Angasi Oysters", sequenceNumber: 27 },
-  { itemName: "Frozen Scallops", sequenceNumber: 28 },
-  { itemName: "Frozen Squid", sequenceNumber: 29 },
-  { itemName: "Frozen Calamari Rings", sequenceNumber: 30 },
-  { itemName: "Frozen Barramundi Fillets", sequenceNumber: 31 },
-  { itemName: "Frozen Tuna Steaks", sequenceNumber: 32 },
+  { itemName: "Large Cooked King Prawns", sequenceNumber: 4 },
+  { itemName: "Large Cooked Tiger Prawns", sequenceNumber: 5 },
+  { itemName: "Medium Cooked Tiger Prawns", sequenceNumber: 6 },
+  { itemName: "Cooked Crystal Bays", sequenceNumber: 7 },
+  { itemName: "Wild Caught Tiger Prawns", sequenceNumber: 8 },
+  { itemName: "Cooked Blue Swimmer Crabs", sequenceNumber: 9 },
+  { itemName: "Green Blue Swimmer Crabs", sequenceNumber: 10 },
+  { itemName: "Large Snapper - 2kg to 4kg", sequenceNumber: 11 },
+  { itemName: "Medium Snapper - 1kg to 2kg", sequenceNumber: 12 },
+  { itemName: "Chris Boiton Coral Trout", sequenceNumber: 13 },
+  { itemName: "Ocean Trout", sequenceNumber: 14 },
+  { itemName: "Salmon - 2 to 3kg", sequenceNumber: 15 },
+  { itemName: "Salmon - 3 to 4kg", sequenceNumber: 16 },
+  { itemName: "Sydney Rock Oysters", sequenceNumber: 17 },
+  { itemName: "Large Sydney Rock Oysters", sequenceNumber: 18 },
+  { itemName: "Pacific Oysters", sequenceNumber: 19 },
+  { itemName: "Unshucked LIVE Sydney Rocks", sequenceNumber: 20 },
+  { itemName: "Black Mussels 1kg Bag", sequenceNumber: 21 },
+  { itemName: "Sashimi Salmon", sequenceNumber: 22 },
+  { itemName: "Sashimi Tuna", sequenceNumber: 23 },
+  { itemName: "100g Smoked Salmon", sequenceNumber: 24 },
+  { itemName: "250g Smoked Salmon", sequenceNumber: 25 },
+  { itemName: "500g Smoked Salmon", sequenceNumber: 26 },
+  { itemName: "1kg Smoked Salmon", sequenceNumber: 27 },
+  { itemName: "50g Salmon Roe", sequenceNumber: 28 },
+  { itemName: "100g Salmon Roe", sequenceNumber: 29 },
+  { itemName: "Palanco Caviar 30g", sequenceNumber: 30 },
+  { itemName: "Palanco Caviar 50g", sequenceNumber: 31 },
+  { itemName: "Cocktail Sauce", sequenceNumber: 32 },
+  { itemName: "Tartare Sauce", sequenceNumber: 33 },
+  { itemName: "WA/TAS/SA Lobsters", sequenceNumber: 34 },
+  { itemName: "Local Lobsters", sequenceNumber: 35 },
+  { itemName: "Lobster Tails - Raw", sequenceNumber: 36 },
+  { itemName: "Cooked Bugs", sequenceNumber: 37 },
+  { itemName: "King Crab Legs", sequenceNumber: 38 },
+  { itemName: "Live Mud Crabs", sequenceNumber: 39 },
+  { itemName: "Barramundi Fillets", sequenceNumber: 40 },
+  { itemName: "Salmon Fillets Skin On", sequenceNumber: 41 },
+  { itemName: "Sea Perch Fillets", sequenceNumber: 42 },
 ];
 
 const categoriesData = [
@@ -45,107 +56,86 @@ const categoriesData = [
     categoryName: "RAW PRAWNS",
     isActive: true,
     sequenceNumber: 1,
-    items: [
-      "Large Green King Prawns",
-      "Medium Green King Prawns",
-      "Green Prawn Cutlets",
-      "Peeled Tail Off Prawns",
-      "Banana Prawns",
-      "Endeavour Prawns",
-    ],
+    items: ["Large Green King Prawns", "Medium Green King Prawns", "Green Prawn Cutlets"],
   },
   {
-    categoryName: "COOKED SEAFOOD",
+    categoryName: "COOKED PRAWNS",
     isActive: true,
     sequenceNumber: 2,
-    items: [
-      "Large Cooked Tiger Prawns",
-      "Medium Cooked Tiger Prawns",
-      "Cooked Crystal Bay Prawns",
-      "Cooked Endeavour Prawns",
-      "Cooked Banana Prawns",
-    ],
+    items: ["Large Cooked King Prawns", "Large Cooked Tiger Prawns", "Medium Cooked Tiger Prawns", "Cooked Crystal Bays"],
   },
   {
-    categoryName: "FRESH FISH",
+    categoryName: "WHOLE FISH",
     isActive: true,
     sequenceNumber: 3,
     items: [
-      "Australian Salmon",
-      "Red Emperor",
-      "Flathead",
-      "Coral Trout",
-      "Yellowtail Kingfish",
-      "Atlantic Salmon",
+      "Large Snapper - 2kg to 4kg",
+      "Medium Snapper - 1kg to 2kg",
+      "Chris Boiton Coral Trout",
+      "Ocean Trout",
+      "Salmon - 2 to 3kg",
+      "Salmon - 3 to 4kg",
     ],
   },
   {
-    categoryName: "CRABS",
+    categoryName: "MOLLUSCS",
     isActive: true,
     sequenceNumber: 4,
-    items: ["Mud Crab", "Blue Swimmer Crab", "Snow Crab", "King Crab"],
+    items: ["Sydney Rock Oysters", "Large Sydney Rock Oysters", "Pacific Oysters", "Unshucked LIVE Sydney Rocks", "Black Mussels 1kg Bag"],
   },
   {
-    categoryName: "LOBSTER",
+    categoryName: "SMOKED",
     isActive: true,
     sequenceNumber: 5,
-    items: ["Australian Lobster", "Canadian Lobster", "Lobster Tails"],
+    items: ["100g Smoked Salmon", "250g Smoked Salmon", "500g Smoked Salmon", "1kg Smoked Salmon"],
   },
   {
-    categoryName: "OYSTERS",
+    categoryName: "SAUCES",
     isActive: true,
     sequenceNumber: 6,
-    items: ["Sydney Rock Oysters", "Pacific Oysters", "Angasi Oysters"],
+    items: ["Cocktail Sauce", "Tartare Sauce"],
   },
   {
-    categoryName: "FROZEN SEAFOOD",
+    categoryName: "CRUSTACEANS",
     isActive: true,
     sequenceNumber: 7,
-    items: [
-      "Frozen Scallops",
-      "Frozen Squid",
-      "Frozen Calamari Rings",
-      "Frozen Barramundi Fillets",
-      "Frozen Tuna Steaks",
-    ],
+    items: ["WA/TAS/SA Lobsters", "Local Lobsters", "Lobster Tails - Raw", "Cooked Bugs", "King Crab Legs", "Live Mud Crabs"],
+  },
+  {
+    categoryName: "FILLETS",
+    isActive: true,
+    sequenceNumber: 8,
+    items: ["Barramundi Fillets", "Salmon Fillets Skin On", "Sea Perch Fillets"],
+  },
+  {
+    categoryName: "CAVIAR",
+    isActive: true,
+    sequenceNumber: 9,
+    items: ["50g Salmon Roe", "100g Salmon Roe", "Palanco Caviar 30g", "Palanco Caviar 50g"],
   },
 ];
 
-// Seed script
 const seed = async () => {
   try {
-    await mongoose.connect(
-      process.env.MONGO_URI,
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }
-    );
+    await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
     console.log("Connected to MongoDB");
-
-    // Clear existing collections
-    await UserMaster.deleteMany();
+ 
     await Category.deleteMany();
     await Item.deleteMany();
-    await OrderDetails.deleteMany();
-    await OrderHistory.deleteMany();
+    
 
-    // Create items
     const createdItems = await Item.insertMany(itemsData);
 
-    // Map item names to their ObjectIds
     const itemMap = createdItems.reduce((acc, item) => {
       acc[item.itemName] = item._id;
       return acc;
     }, {});
 
-    // Update categories with item references
     const updatedCategories = categoriesData.map((category) => ({
       ...category,
       items: category.items.map((itemName) => itemMap[itemName]),
     }));
 
-    // Insert categories with referenced items
     await Category.insertMany(updatedCategories);
 
     console.log("Data seeded successfully!");

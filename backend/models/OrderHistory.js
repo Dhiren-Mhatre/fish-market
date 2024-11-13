@@ -7,6 +7,13 @@ const orderHistorySchema = new mongoose.Schema({
   phone: { type: String, required: true },
   orderTotal: { type: Number, required: true },
   type: { type: String, enum: ['NYE', 'XMAS'], required: true },
+  lastUpdated: { type: Date, default: Date.now },  // Added lastUpdated field
+});
+
+// Middleware to update the `lastUpdated` field before saving the document
+orderHistorySchema.pre('save', function(next) {
+  this.lastUpdated = Date.now();
+  next();
 });
 
 export default mongoose.models.OrderHistory || mongoose.model('OrderHistory', orderHistorySchema);

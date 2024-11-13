@@ -20,6 +20,13 @@ const orderDetailsSchema = new mongoose.Schema({
   deposit: { type: Number, default: 50 },
   packagingFee: { type: Number, default: 5 },
   total: { type: Number },
+  lastUpdated: { type: Date, default: Date.now },  // Added lastUpdated field
+});
+
+// Middleware to update the `lastUpdated` field before saving the document
+orderDetailsSchema.pre('save', function(next) {
+  this.lastUpdated = Date.now();
+  next();
 });
 
 export default mongoose.models.OrderDetails || mongoose.model('OrderDetails', orderDetailsSchema);

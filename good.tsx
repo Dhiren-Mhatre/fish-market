@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 import { Checkbox } from "@/components/ui/checkbox"; // Adjust the path if needed
 
@@ -48,10 +49,10 @@ export function ComprehensiveOrderForm() {
   const [orderNumber, setOrderNumber] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [categories, setCategories] = useState<Category[]>([]);
-  
+  const [termsAcknowledged, setTermsAcknowledged] = useState<boolean>(false);
   const [xmasChecked, setXmasChecked] = useState(false);
   const [nyeChecked, setNyeChecked] = useState(false);
-  const [isOrderSubmitted, setIsOrderSubmitted] = useState(false);
+
   const handleXmasChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setXmasChecked(e.target.checked);
     if (e.target.checked) setNyeChecked(false);
@@ -104,7 +105,6 @@ export function ComprehensiveOrderForm() {
     });
     return total + 50 + 10;
   };
-
   const handleSubmit = async () => {
     const customerName = (
       document.getElementById("customer-name") as HTMLInputElement
@@ -116,8 +116,10 @@ export function ComprehensiveOrderForm() {
       document.getElementById("special") as HTMLInputElement
     )?.value;
 
-    if (!customerName || !phone || !mobile || (!xmasChecked && !nyeChecked)) {
-      alert("Please fill all the required fields and acknowledge the terms!");
+    if (!customerName || !phone || !mobile  ) {
+      toast.error(
+        "Please fill all the required fields and acknowledge the terms!"
+      );
       return;
     }
 
@@ -141,13 +143,13 @@ export function ComprehensiveOrderForm() {
     Object.entries(orderItems).forEach(([category]) => {
       Object.entries(orderItems[category]).forEach(([item, details]) => {
         orderDetailsData.items.push({
-          item: item._id, // Make sure item is the _id here, not the name
+          item: item._id,  // Make sure item is the _id here, not the name
           quantity: details.quantity,
           price: details.price,
         });
       });
     });
-
+    
     const orderHistoryData = {
       orderNumber,
       name: orderDetailsData.customerName,
@@ -166,16 +168,17 @@ export function ComprehensiveOrderForm() {
         orderHistoryData
       );
 
-      alert("Order submitted successfully!");
-      setIsOrderSubmitted(true);
+      
+      toast.success("Order submitted successfully!");
     } catch (error) {
       console.error("Error submitting order:", error);
-      alert("Failed to submit order. Please try again.");
+      toast.error("Failed to submit order. Please try again.");
     }
   };
 
- 
-
+  const handleTermsInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTermsAcknowledged(e.target.value.toLowerCase() === "yes");
+  };
   const clearFormData = () => {
     setOrderItems({});
     setOrderNumber(uuidv4());
@@ -183,9 +186,8 @@ export function ComprehensiveOrderForm() {
     (document.getElementById("phone") as HTMLInputElement).value = "";
     (document.getElementById("mobile") as HTMLInputElement).value = "";
     (document.getElementById("special") as HTMLInputElement).value = "";
-    
+    setTermsAcknowledged(false);
   };
-
   return (
     
       <div className="max-w-4xl mx-auto p-6 space-y-8">
@@ -216,7 +218,14 @@ export function ComprehensiveOrderForm() {
     
           <div className="grid gap-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              
+              <div>
+                <Label>Order No</Label>
+                <Input
+                  readOnly
+                  value={orderNumber || "Loading..."}
+                  className="bg-gray-200 cursor-not-allowed w-full"
+                />
+              </div>
             </div>
     
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -315,13 +324,6 @@ export function ComprehensiveOrderForm() {
                 <CardTitle>Order Summary</CardTitle>
               </CardHeader>
               <CardContent>
-              {isOrderSubmitted && (
-                <div className="flex justify-between font-bold">
-                  <span>Order Number</span>
-                  <span>{orderNumber}</span>
-                </div>
-              )}
-
                 <div className="space-y-2">
                   {Object.entries(orderItems).map(([category, items]) => (
                     <div key={category}>
