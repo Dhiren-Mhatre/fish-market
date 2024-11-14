@@ -195,183 +195,180 @@ export function ComprehensiveOrderForm() {
 
 
   return (
-    
-      <div className="max-w-4xl mx-auto p-6 space-y-8">
-        <div className="border rounded-lg p-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">ORDER FORM</h1>
-            <div className="flex items-center gap-4 mt-4 sm:mt-0">
-              <div className="flex items-center gap-2">
-                <Label htmlFor="xmas" className="font-bold">XMAS</Label>
-                <input
-                  type="checkbox"
-                  id="xmas"
-                  checked={xmasChecked}
-                  onChange={handleXmasChange}
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <Label htmlFor="nye" className="font-bold">NYE</Label>
-                <input
-                  type="checkbox"
-                  id="nye"
-                  checked={nyeChecked}
-                  onChange={handleNyeChange}
-                />
-              </div>
-            </div>
+    <div className="max-w-7xl mx-auto p-6 bg-blue-200  space-y-8">
+    <div className="border rounded-lg p-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">ORDER FORM</h1>
+        <div className="flex items-center gap-4 mt-4 sm:mt-0">
+          <div className="flex items-center gap-2">
+            <Label htmlFor="xmas" className="font-bold">XMAS</Label>
+            <input
+              type="checkbox"
+              id="xmas"
+              checked={xmasChecked}
+              onChange={handleXmasChange}
+            />
           </div>
-    
-          <div className="grid gap-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              
-            </div>
-    
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="customer-name">Customer Name</Label>
-                <Input id="customer-name" className="w-full" />
-              </div>
-              <div>
-                <Label htmlFor="phone">Phone</Label>
-                <Input id="phone" type="tel" className="w-full" />
-              </div>
-            </div>
-    
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="mobile">Mobile</Label>
-                <Input id="mobile" type="tel" className="w-full" />
-              </div>
-              <div>
-                <Label>Pick up Time</Label>
-                <Input
-                  readOnly
-                  defaultValue="10am till 1pm"
-                  className="bg-gray-200 cursor-not-allowed w-full"
-                />
-              </div>
-              <div>
-                <Label>Date</Label>
-                <Input
-                  readOnly
-                  value={date}
-                  className="bg-gray-200 cursor-not-allowed w-full"
-                />
-              </div>
-            </div>
-    
-            
-        <Separator />
-        {categories
-  .filter((category) => category.isActive)
-  .map((category) => (
-    <div key={category._id} className="space-y-2">
-      <h3 className="font-bold">{category.categoryName}</h3>
-      {category.items
-        .filter((item) => item.isActive)
-        .map((item) => (
-          <div key={item._id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <Label className="flex-1">{item.itemName}</Label>
-            <div className="flex gap-4 items-center">
-              <Input
-                className="w-20"
-                placeholder=""
-                onChange={(e) =>
-                  handleItemChange(
-                    category.categoryName,
-                    item.itemName,
-                    Number(e.target.value),
-                    10,
-                    orderItems[category.categoryName]?.[item.itemName]?.cutWanted || false,
-                    item.unit
-                  )
-                }
-              />
-              <span className="text-gray-500">Price: $10</span>
-            </div>
-            {category.categoryName === "CRUSTACEANS" && (
-              <div className="flex items-center gap-2">
-                <Label className="mr-2">Cut Wanted</Label>
-                <input
-                  type="checkbox"
-                  onChange={(e) =>
-                    handleItemChange(
-                      category.categoryName,
-                      item.itemName,
-                      orderItems[category.categoryName]?.[item.itemName]?.quantity || 0,
-                      10,
-                      e.target.checked,
-                      item.unit
-                    )
-                  }
-                  checked={orderItems[category.categoryName]?.[item.itemName]?.cutWanted || false}
-                />
-              </div>
-            )}
-            <span>{item.unit}</span>
-          </div>
-        ))}
-    </div>
-  ))}
-
-
-        <Separator />
-    
-            <div>
-              <Label htmlFor="special">Special Requests</Label>
-              <Input id="special" className="mt-2 w-full" />
-            </div>
-    
-            <div className="text-sm">
-              <p>
-                I agree to the terms and conditions by clicking submit button
-              </p>
-            </div>
-    
-            <Separator />
-    
-            <Card>
-  <CardHeader>
-    <CardTitle>Order Summary</CardTitle>
-  </CardHeader>
-  <CardContent>
-    {isOrderSubmitted && (
-      <div className="mb-4 font-semibold">
-        <span>Order Number: {orderNumber}</span>
-      </div>
-    )}
-    {Object.entries(orderItems).map(([category, items]) => (
-      <div key={category}>
-        <h4 className="font-semibold">{category}</h4>
-        {Object.entries(items).map(([item, details]) => (
-          <div key={item} className="flex justify-between">
-            <span>{item}</span>
-            <span>
-              {details.quantity} {details.unit} - ${details.quantity * details.price}
-            </span>
-            {details.cutWanted && <span>(Cut Wanted)</span>}
-          </div>
-        ))}
-      </div>
-    ))}
-    <div className="flex justify-between">
-      <span>Packaging Fee</span>
-      <span>$10</span>
-    </div>
-    <div className="flex justify-between font-bold">
-      <span>Total</span>
-      <span>${calculateTotal().toFixed(2)}</span>
-    </div>
-  </CardContent>
-  <CardFooter className="flex flex-col sm:flex-row gap-4">
-    <Button onClick={handleSubmit}>Submit Order</Button>
-  </CardFooter>
-</Card>
-
+          <div className="flex items-center gap-2">
+            <Label htmlFor="nye" className="font-bold">NYE</Label>
+            <input
+              type="checkbox"
+              id="nye"
+              checked={nyeChecked}
+              onChange={handleNyeChange}
+            />
           </div>
         </div>
       </div>
+
+      <div className="grid gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="customer-name">Customer Name</Label>
+            <Input id="customer-name" className="w-full" />
+          </div>
+          <div>
+            <Label htmlFor="phone">Phone</Label>
+            <Input id="phone" type="tel" className="w-full" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <Label htmlFor="mobile">Mobile</Label>
+            <Input id="mobile" type="tel" className="w-full" />
+          </div>
+          <div>
+            <Label>Pick up Time</Label>
+            <Input
+              readOnly
+              defaultValue="10am till 1pm"
+              className="bg-gray-200 cursor-not-allowed w-full"
+            />
+          </div>
+          <div>
+            <Label>Date</Label>
+            <Input
+              readOnly
+              value={date}
+              className="bg-gray-200 cursor-not-allowed w-full"
+            />
+          </div>
+        </div>
+
+        <Separator />
+
+        {categories
+          .filter((category) => category.isActive)
+          .map((category) => (
+            <div key={category._id} className="space-y-4">
+              <h3 className="font-bold text-xl">{category.categoryName}</h3>
+              {category.items
+                .filter((item) => item.isActive)
+                .map((item) => (
+                  <div
+                    key={item._id}
+                    className="flex flex-wrap items-center gap-2 sm:gap-4"
+                  >
+                    <Label className="w-full sm:w-auto text-lg flex-shrink-0 sm:flex-grow">{item.itemName}</Label>
+                    <div className="flex items-center gap-2 flex-grow sm:flex-grow-0">
+                      <Input
+                        className="w-20"
+                        placeholder=""
+                        onChange={(e) =>
+                          handleItemChange(
+                            category.categoryName,
+                            item.itemName,
+                            Number(e.target.value),
+                            10,
+                            orderItems[category.categoryName]?.[item.itemName]?.cutWanted || false,
+                            item.unit
+                          )
+                        }
+                      />
+                      <span className="text-gray-500 whitespace-nowrap">$10</span>
+                    </div>
+                    <span className="text-lg">{item.unit}</span>
+                    {category.categoryName === "CRUSTACEANS" && (
+                      <div className="flex items-center gap-2 ml-auto sm:ml-0">
+                        <Label className="mr-2 whitespace-nowrap">Cut Wanted</Label>
+                        <input
+                          type="checkbox"
+                          onChange={(e) =>
+                            handleItemChange(
+                              category.categoryName,
+                              item.itemName,
+                              orderItems[category.categoryName]?.[item.itemName]?.quantity || 0,
+                              10,
+                              e.target.checked,
+                              item.unit
+                            )
+                          }
+                          checked={orderItems[category.categoryName]?.[item.itemName]?.cutWanted || false}
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+            </div>
+          ))}
+
+        <Separator />
+
+        <div>
+          <Label htmlFor="special">Special Requests</Label>
+          <Input id="special" className="mt-2 w-full" />
+        </div>
+
+        <div className="text-sm">
+          <p>
+            I agree to the terms and conditions by clicking submit button
+          </p>
+        </div>
+
+        <Separator />
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Order Summary</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isOrderSubmitted && (
+              <div className="mb-4 font-semibold">
+                <span>Order Number: {orderNumber}</span>
+              </div>
+            )}
+            {Object.entries(orderItems).map(([category, items]) => (
+              <div key={category}>
+                <h4 className="font-semibold">{category}</h4>
+                {Object.entries(items).map(([item, details]) => (
+                  <div key={item} className="flex justify-between">
+                    <span>{item}</span>
+                    <span>
+                      {details.quantity} {details.unit} - ${details.quantity * details.price}
+                    </span>
+                    {details.cutWanted && <span>(Cut Wanted)</span>}
+                  </div>
+                ))}
+              </div>
+            ))}
+            <div className="flex justify-between">
+              <span>Packaging Fee</span>
+              <span>$10</span>
+            </div>
+            <div className="flex justify-between font-bold">
+              <span>Total</span>
+              <span>${calculateTotal().toFixed(2)}</span>
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col sm:flex-row gap-4">
+            <Button onClick={handleSubmit}>Submit Order</Button>
+          </CardFooter>
+        </Card>
+
+      </div>
+    </div>
+  </div>
     );
     
 }  
