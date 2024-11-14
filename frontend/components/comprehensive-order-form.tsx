@@ -13,22 +13,53 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
- 
- 
+
 const generateOrderNumber = () => Math.floor(10000 + Math.random() * 90000).toString();
 
+interface OrderItem {
+  quantity: number;
+  price: number;
+  cutWanted: boolean;
+  unit: string;
+}
+
+interface OrderItems {
+  [category: string]: {
+    [item: string]: OrderItem;
+  };
+}
+interface OrderDetailItem {
+  itemName: string;
+  quantity: number;
+  price: number;
+  cutWanted: boolean;
+  unit: string;
+}
+
+interface Item {
+  _id: string;
+  itemName: string;
+  isActive: boolean;
+  unit: string;
+}
+
+interface Category {
+  _id: string;
+  categoryName: string;
+  isActive: boolean;
+  items: Item[];
+}
 
 export function ComprehensiveOrderForm() {
   const [orderItems, setOrderItems] = useState<OrderItems>({});
   const [orderNumber, setOrderNumber] = useState<string>("");
-
   const [date, setDate] = useState<string>("");
   const [categories, setCategories] = useState<Category[]>([]);
-  
+
   const [xmasChecked, setXmasChecked] = useState(false);
   const [nyeChecked, setNyeChecked] = useState(false);
   const [isOrderSubmitted, setIsOrderSubmitted] = useState(false);
+
   const handleXmasChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setXmasChecked(e.target.checked);
     if (e.target.checked) setNyeChecked(false);
@@ -38,6 +69,7 @@ export function ComprehensiveOrderForm() {
     setNyeChecked(e.target.checked);
     if (e.target.checked) setXmasChecked(false);
   };
+
   useEffect(() => {
     const fetchInitialData = async () => {
       const today = new Date().toISOString().split("T")[0];
@@ -57,7 +89,15 @@ export function ComprehensiveOrderForm() {
 
     fetchInitialData();
   }, []);
-  const handleItemChange = (category, item, quantity, price = 10, cutWanted = false,unit) => {
+
+  const handleItemChange = (
+    category: string,
+    item: string,
+    quantity: number,
+    price: number = 10,
+    cutWanted: boolean = false,
+    unit: string
+  ) => {
     setOrderItems((prev) => ({
       ...prev,
       [category]: {
@@ -72,7 +112,6 @@ export function ComprehensiveOrderForm() {
     }));
   };
 
-
   const calculateTotal = () => {
     let total = 0;
     Object.values(orderItems).forEach((category) => {
@@ -80,80 +119,80 @@ export function ComprehensiveOrderForm() {
         total += item.quantity * item.price;
       });
     });
-    return total  + 10;
+    return total + 10;
   };
-const handleSubmit = async () => {
-  const customerName = document.getElementById("customer-name")?.value;
-  const phone = document.getElementById("phone")?.value;
-  const mobile = document.getElementById("mobile")?.value;
-  const specialRequest = document.getElementById("special")?.value;
-
-  if (!customerName || !phone || !mobile || (!xmasChecked && !nyeChecked)) {
-    alert("Please fill all the required fields and acknowledge the terms!");
-    return;
-  }
-
-  // Order details object with UUID
-  const orderDetailsData = {
-    orderNumber,
-    customerName,
-    phone,
-    mobile,
-    type: xmasChecked ? "XMAS" : "NYE",
-    orderDate: new Date(date),
-    specialRequest,
-    items: [], // Make sure to include all the items here
-    subtotal: calculateTotal() - 10,
-    packagingFee: 10,
-    total: calculateTotal(),
-  };
-
-  // Add items to the orderDetailsData
-  Object.entries(orderItems).forEach(([category, items]) => {
-    Object.entries(items).forEach(([item, details]) => {
-      orderDetailsData.items.push({
-        itemName: item,
-        quantity: details.quantity,
-        price: details.price,
-        cutWanted: details.cutWanted,
-        unit: details.unit,
+  const handleSubmit = async () => {
+    const customerName = (document.getElementById("customer-name") as HTMLInputElement)?.value;
+    const phone = (document.getElementById("phone") as HTMLInputElement)?.value;
+    const mobile = (document.getElementById("mobile") as HTMLInputElement)?.value;
+    const specialRequest = (document.getElementById("special") as HTMLInputElement)?.value;
+  
+    if (!customerName || !phone || !mobile || (!xmasChecked && !nyeChecked)) {
+      alert("Please fill all the required fields and acknowledge the terms!");
+      return;
+    }
+  
+    // Order details object with UUID
+    const orderDetailsData = {
+      orderNumber,
+      customerName,
+      phone,
+      mobile,
+      type: xmasChecked ? "XMAS" : "NYE",
+      orderDate: new Date(date),
+      specialRequest,
+      items: [] as OrderDetailItem[], // Explicitly define the type for items
+      subtotal: calculateTotal() - 10,
+      packagingFee: 10,
+      total: calculateTotal(),
+    };
+  
+    // Add items to the orderDetailsData
+    Object.entries(orderItems).forEach(([category, items]) => {
+      Object.entries(items).forEach(([item, details]) => {
+        orderDetailsData.items.push({
+          itemName: item,
+          quantity: details.quantity,
+          price: details.price,
+          cutWanted: details.cutWanted,
+          unit: details.unit,
+        });
       });
     });
-  });
-
-  // Save user and order data
-  const userData = {
-    name: customerName,
-    phone,
-    mobile,
-    orders: [orderNumber], 
+  
+    // Save user and order data
+    const userData = {
+      name: customerName,
+      phone,
+      mobile,
+      orders: [orderNumber],
+    };
+  
+    try {
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users`, userData);
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order-details`, orderDetailsData);
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order-history`, {
+        orderNumber,
+        name: orderDetailsData.customerName,
+        phone: orderDetailsData.phone,
+        orderTotal: orderDetailsData.total,
+        type: orderDetailsData.type,
+      });
+  
+      alert("Order submitted successfully!");
+      setIsOrderSubmitted(true);
+  
+      // Store the order in localStorage for the Order Summary page
+      localStorage.setItem("orderDetails", JSON.stringify(orderDetailsData));
+  
+      window.location.href = '/order-summary';
+    } catch (error) {
+      console.error("Error submitting order:", error);
+      alert("Failed to submit order. Please try again.");
+    }
   };
+  
 
-  try {
-    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users`, userData);
-    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order-details`, orderDetailsData);
-    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order-history`, {
-      orderNumber,
-      name: orderDetailsData.customerName,
-      phone: orderDetailsData.phone,
-      orderTotal: orderDetailsData.total,
-      type: orderDetailsData.type,
-    });
-
-    alert("Order submitted successfully!");
-    setIsOrderSubmitted(true);
-
-    // Store the order in localStorage for the Order Summary page
-    localStorage.setItem("orderDetails", JSON.stringify(orderDetailsData));
-
-    window.location.href = '/order-summary';
-  } catch (error) {
-    console.error("Error submitting order:", error);
-    alert("Failed to submit order. Please try again.");
-  }
-};
-
- 
 
   return (
     
@@ -225,56 +264,57 @@ const handleSubmit = async () => {
             
         <Separator />
         {categories
-          .filter((category) => category.isActive)
-          .map((category) => (
-            <div key={category._id} className="space-y-2">
-              <h3 className="font-bold">{category.categoryName}</h3>
-              {category.items
-                .filter((item) => item.isActive)
-                .map((item) => (
-                  <div key={item._id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                    <Label className="flex-1">{item.itemName}</Label>
-                    <div className="flex gap-4 items-center">
-                    <Input
-  className="w-20"
-  placeholder=""
-  onChange={(e) =>
-    handleItemChange(
-      category.categoryName,
-      item.itemName,
-      Number(e.target.value),
-      10,
-      orderItems[category.categoryName]?.[item.itemName]?.cutWanted || false,
-      item.unit // Passing the unit of the item
-    )
-  }
-/>
-                      <span className="text-gray-500">Price: $10</span>
-                    </div>
-                    {category.categoryName === "CRUSTACEANS" && (
-                      <div className="flex items-center gap-2">
-                        <Label className="mr-2">Cut Wanted</Label>
-                        <input
-                          type="checkbox"
-                          onChange={(e) =>
-                            handleItemChange(
-                              category.categoryName,
-                              item.itemName,
-                              orderItems[category.categoryName]?.[item.itemName]?.quantity || 0,
-                              10,
-                              e.target.checked
-                            )
-                          }
-                          checked={
-                            orderItems[category.categoryName]?.[item.itemName]?.cutWanted || false
-                          }
-                        />
-                      </div>
-                    )} <span>{item.unit}</span>
-                  </div>
-                ))}
+  .filter((category) => category.isActive)
+  .map((category) => (
+    <div key={category._id} className="space-y-2">
+      <h3 className="font-bold">{category.categoryName}</h3>
+      {category.items
+        .filter((item) => item.isActive)
+        .map((item) => (
+          <div key={item._id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <Label className="flex-1">{item.itemName}</Label>
+            <div className="flex gap-4 items-center">
+              <Input
+                className="w-20"
+                placeholder=""
+                onChange={(e) =>
+                  handleItemChange(
+                    category.categoryName,
+                    item.itemName,
+                    Number(e.target.value),
+                    10,
+                    orderItems[category.categoryName]?.[item.itemName]?.cutWanted || false,
+                    item.unit
+                  )
+                }
+              />
+              <span className="text-gray-500">Price: $10</span>
             </div>
-          ))}
+            {category.categoryName === "CRUSTACEANS" && (
+              <div className="flex items-center gap-2">
+                <Label className="mr-2">Cut Wanted</Label>
+                <input
+                  type="checkbox"
+                  onChange={(e) =>
+                    handleItemChange(
+                      category.categoryName,
+                      item.itemName,
+                      orderItems[category.categoryName]?.[item.itemName]?.quantity || 0,
+                      10,
+                      e.target.checked,
+                      item.unit
+                    )
+                  }
+                  checked={orderItems[category.categoryName]?.[item.itemName]?.cutWanted || false}
+                />
+              </div>
+            )}
+            <span>{item.unit}</span>
+          </div>
+        ))}
+    </div>
+  ))}
+
 
         <Separator />
     
