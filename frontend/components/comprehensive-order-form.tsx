@@ -82,77 +82,77 @@ export function ComprehensiveOrderForm() {
     });
     return total  + 10;
   };
-  const handleSubmit = async () => {
-    const customerName = document.getElementById("customer-name")?.value;
-    const phone = document.getElementById("phone")?.value;
-    const mobile = document.getElementById("mobile")?.value;
-    const specialRequest = document.getElementById("special")?.value;
-  
-    if (!customerName || !phone || !mobile || (!xmasChecked && !nyeChecked)) {
-      alert("Please fill all the required fields and acknowledge the terms!");
-      return;
-    }
-  
-    // Order details object with UUID
-    const orderDetailsData = {
-      orderNumber,
-      customerName,
-      phone,
-      mobile,
-      type: xmasChecked ? "XMAS" : "NYE",
-      orderDate: new Date(date),
-      specialRequest,
-      items: [], // Make sure to include all the items here
-      subtotal: calculateTotal() - 10,
-      packagingFee: 10,
-      total: calculateTotal(),
-    };
-  
-    // Add items to the orderDetailsData
-    Object.entries(orderItems).forEach(([category, items]) => {
-      Object.entries(items).forEach(([item, details]) => {
-        orderDetailsData.items.push({
-          itemName: item,
-          quantity: details.quantity,
-          price: details.price,
-          cutWanted: details.cutWanted,
-          unit: details.unit,
-        });
+const handleSubmit = async () => {
+  const customerName = document.getElementById("customer-name")?.value;
+  const phone = document.getElementById("phone")?.value;
+  const mobile = document.getElementById("mobile")?.value;
+  const specialRequest = document.getElementById("special")?.value;
+
+  if (!customerName || !phone || !mobile || (!xmasChecked && !nyeChecked)) {
+    alert("Please fill all the required fields and acknowledge the terms!");
+    return;
+  }
+
+  // Order details object with UUID
+  const orderDetailsData = {
+    orderNumber,
+    customerName,
+    phone,
+    mobile,
+    type: xmasChecked ? "XMAS" : "NYE",
+    orderDate: new Date(date),
+    specialRequest,
+    items: [], // Make sure to include all the items here
+    subtotal: calculateTotal() - 10,
+    packagingFee: 10,
+    total: calculateTotal(),
+  };
+
+  // Add items to the orderDetailsData
+  Object.entries(orderItems).forEach(([category, items]) => {
+    Object.entries(items).forEach(([item, details]) => {
+      orderDetailsData.items.push({
+        itemName: item,
+        quantity: details.quantity,
+        price: details.price,
+        cutWanted: details.cutWanted,
+        unit: details.unit,
       });
     });
-  
-    // Save user and order data
-    const userData = {
-      name: customerName,
-      phone,
-      mobile,
-      orders: [orderNumber], 
-    };
-  
-    try {
-      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users`, userData);
-      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order-details`, orderDetailsData);
-      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order-history`, {
-        orderNumber,
-        name: orderDetailsData.customerName,
-        phone: orderDetailsData.phone,
-        orderTotal: orderDetailsData.total,
-        type: orderDetailsData.type,
-      });
-  
-      alert("Order submitted successfully!");
-      setIsOrderSubmitted(true);
-  
-      // Store the order in localStorage for the Order Summary page
-      localStorage.setItem("orderDetails", JSON.stringify(orderDetailsData));
-  
-      window.location.href = '/order-summary';
-    } catch (error) {
-      console.error("Error submitting order:", error);
-      alert("Failed to submit order. Please try again.");
-    }
+  });
+
+  // Save user and order data
+  const userData = {
+    name: customerName,
+    phone,
+    mobile,
+    orders: [orderNumber], 
   };
-  
+
+  try {
+    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users`, userData);
+    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order-details`, orderDetailsData);
+    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order-history`, {
+      orderNumber,
+      name: orderDetailsData.customerName,
+      phone: orderDetailsData.phone,
+      orderTotal: orderDetailsData.total,
+      type: orderDetailsData.type,
+    });
+
+    alert("Order submitted successfully!");
+    setIsOrderSubmitted(true);
+
+    // Store the order in localStorage for the Order Summary page
+    localStorage.setItem("orderDetails", JSON.stringify(orderDetailsData));
+
+    window.location.href = '/order-summary';
+  } catch (error) {
+    console.error("Error submitting order:", error);
+    alert("Failed to submit order. Please try again.");
+  }
+};
+
  
 
   return (

@@ -3,13 +3,34 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
+interface Item {
+  itemName: string;
+  quantity: number;
+  unit: string;
+  price: number;
+  cutWanted?: boolean;
+}
+
+interface OrderDetails {
+  orderNumber: string;
+  customerName: string;
+  phone: string;
+  mobile: string;
+  type: string;
+  specialRequest?: string;
+  orderDate: string;
+  items: Item[];
+  packagingFee: number;
+  total: number;
+}
+
 export default function OrderSummaryPage() {
-  const [orderDetails, setOrderDetails] = useState<any>(null);
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
 
   useEffect(() => {
     const storedOrderDetails = localStorage.getItem("orderDetails");
     if (storedOrderDetails) {
-      setOrderDetails(JSON.parse(storedOrderDetails));
+      setOrderDetails(JSON.parse(storedOrderDetails) as OrderDetails);
     }
   }, []);
 
@@ -47,7 +68,7 @@ export default function OrderSummaryPage() {
 
             <div>
               <h3 className="font-semibold text-lg">Items:</h3>
-              {orderDetails.items.map((item: any, index: number) => (
+              {orderDetails.items.map((item: Item, index: number) => (
                 <div
                   key={index}
                   className="flex justify-between items-center py-2 border-b last:border-0"
