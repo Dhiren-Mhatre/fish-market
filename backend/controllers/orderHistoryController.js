@@ -31,16 +31,19 @@ export const deleteOrderHistory = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 export const createOrderHistory = async (req, res) => {
   try {
-    const orderHistory = new OrderHistory(req.body);
+    const orderHistory = new OrderHistory({
+      ...req.body,
+    });
+
     await orderHistory.save();
     res.status(201).json(orderHistory);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 export const getAllOrderHistory = async (req, res) => {
   try {

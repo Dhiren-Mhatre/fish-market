@@ -34,15 +34,15 @@ app.use("/api/users", userRoutes);
 app.get('/', (req, res) => {
   res.send('Welcome to the backend API');
 });
-const serverURL = `${process.env.OPO}`; // Ensure this uses the correct protocol (http or https)
+// const serverURL = `${process.env.OPO}`; // Ensure this uses the correct protocol (http or https)
 
-setInterval(() => {
-  https.get(serverURL, (res) => { // Change to https.get if using HTTP
-    console.log(`Server pinged: ${res.statusCode}`);
-  }).on("error", (err) => {
-    console.error("Error pinging the server:", err.message);
-  });
-}, 600000);
+// setInterval(() => {
+//   https.get(serverURL, (res) => { // Change to https.get if using HTTP
+//     console.log(`Server pinged: ${res.statusCode}`);
+//   }).on("error", (err) => {
+//     console.error("Error pinging the server:", err.message);
+//   });
+// }, 600000);
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

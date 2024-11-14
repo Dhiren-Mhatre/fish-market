@@ -3,12 +3,13 @@ import mongoose from "mongoose";
 const itemSchema = new mongoose.Schema({
   itemName: { type: String, required: true },
   isCut: { type: Boolean, default: false },
-  sequenceNumber: { type: Number, required: true },
+  order: { type: Number, required: true },
   lastUpdated: { type: Date, default: Date.now },
+  isActive: { type: Boolean, default: true },
+  unit: { type: String, required: true }  // New field for unit
 });
 
-// Middleware to update the `lastUpdated` field before saving the document
-itemSchema.pre('save', function(next) {
+itemSchema.pre('save', function (next) {
   this.lastUpdated = Date.now();
   next();
 });

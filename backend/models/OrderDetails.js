@@ -1,4 +1,3 @@
-// models/OrderDetails.js
 import mongoose from 'mongoose';
 
 const orderDetailsSchema = new mongoose.Schema({
@@ -14,13 +13,13 @@ const orderDetailsSchema = new mongoose.Schema({
       item: { type: mongoose.Schema.Types.ObjectId, ref: 'Item' },
       quantity: { type: Number },
       price: { type: Number },
+      unit: { type: String, required: true },  // Added unit field
     },
   ],
   subtotal: { type: Number },
-  deposit: { type: Number, default: 50 },
   packagingFee: { type: Number, default: 5 },
   total: { type: Number },
-  lastUpdated: { type: Date, default: Date.now },  // Added lastUpdated field
+  lastUpdated: { type: Date, default: Date.now },
 });
 
 // Middleware to update the `lastUpdated` field before saving the document

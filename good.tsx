@@ -14,38 +14,15 @@ import {
 } from "@/components/ui/card";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import { Checkbox } from "@/components/ui/checkbox"; // Adjust the path if needed
+ 
+ 
+const generateOrderNumber = () => Math.floor(10000 + Math.random() * 90000).toString();
 
-interface ItemDetails {
-  quantity: number;
-  price: number;
-}
-
-interface CategoryItem {
-  _id: string;
-  itemName: string;
-}
-
-interface Category {
-  _id: string;
-  categoryName: string;
-  items: CategoryItem[];
-}
-
-interface OrderItems {
-  [category: string]: {
-    [item: string]: ItemDetails;
-  };
-}
-interface OrderItem {
-  item: string;
-  quantity: number;
-  price: number;
-}
 
 export function ComprehensiveOrderForm() {
   const [orderItems, setOrderItems] = useState<OrderItems>({});
   const [orderNumber, setOrderNumber] = useState<string>("");
+
   const [date, setDate] = useState<string>("");
   const [categories, setCategories] = useState<Category[]>([]);
   
@@ -71,7 +48,8 @@ export function ComprehensiveOrderForm() {
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories`
         );
         setCategories(categoriesResponse.data);
-        setOrderNumber(uuidv4());
+        const uniqueOrderNumber = await generateOrderNumber();
+        setOrderNumber(uniqueOrderNumber);
       } catch (error) {
         console.error("Error fetching initial data:", error);
       }
@@ -79,21 +57,21 @@ export function ComprehensiveOrderForm() {
 
     fetchInitialData();
   }, []);
-
-  const handleItemChange = (
-    category: string,
-    item: string,
-    value: number,
-    price = 10
-  ) => {
+  const handleItemChange = (category, item, quantity, price = 10, cutWanted = false,unit) => {
     setOrderItems((prev) => ({
       ...prev,
       [category]: {
         ...prev[category],
-        [item]: { quantity: value, price },
+        [item]: {
+          quantity: quantity || 0,
+          price,
+          cutWanted,
+          unit,
+        },
       },
     }));
   };
+
 
   const calculateTotal = () => {
     let total = 0;
@@ -102,9 +80,8 @@ export function ComprehensiveOrderForm() {
         total += item.quantity * item.price;
       });
     });
-    return total + 50 + 10;
+    return total  + 10;
   };
-
   const handleSubmit = async () => {
     const customerName = (
       document.getElementById("customer-name") as HTMLInputElement
@@ -115,14 +92,15 @@ export function ComprehensiveOrderForm() {
     const specialRequest = (
       document.getElementById("special") as HTMLInputElement
     )?.value;
-
+  
     if (!customerName || !phone || !mobile || (!xmasChecked && !nyeChecked)) {
       alert("Please fill all the required fields and acknowledge the terms!");
       return;
     }
-
+  
+    // Order details object with UUID
     const orderDetailsData = {
-      orderNumber,
+      orderNumber,  // This will be the UUID
       customerName,
       phone,
       mobile,
@@ -131,60 +109,67 @@ export function ComprehensiveOrderForm() {
         : "NYE",
       orderDate: new Date(date),
       specialRequest,
-      items: [] as OrderItem[], // Explicitly type the items array
-      subtotal: calculateTotal() - 60,
-      deposit: 50,
+      items: [] as OrderItem[],
+      subtotal: calculateTotal() - 10,
       packagingFee: 10,
       total: calculateTotal(),
     };
-
+  
     Object.entries(orderItems).forEach(([category]) => {
       Object.entries(orderItems[category]).forEach(([item, details]) => {
         orderDetailsData.items.push({
-          item: item._id, // Make sure item is the _id here, not the name
+          item: item._id,
           quantity: details.quantity,
           price: details.price,
         });
       });
     });
-
-    const orderHistoryData = {
-      orderNumber,
-      name: orderDetailsData.customerName,
-      phone: orderDetailsData.phone,
-      orderTotal: orderDetailsData.total,
-      type: orderDetailsData.type,
+  
+    // User data with UUID order number
+    const userData = {
+      name: customerName,
+      phone,
+      mobile,
+      orders: [orderNumber],  // Order UUID for tracking
     };
-
+  
     try {
+      // Submit user details
+      console.log("Order Number:", orderNumber);
+
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users`, userData);
+      // Submit order details
       await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order-details`,
         orderDetailsData
       );
       await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order-history`,
-        orderHistoryData
+        {
+          orderNumber,
+          name: orderDetailsData.customerName,
+          phone: orderDetailsData.phone,
+          orderTotal: orderDetailsData.total,
+          type: orderDetailsData.type,
+        }
       );
-
+  
       alert("Order submitted successfully!");
       setIsOrderSubmitted(true);
+  
+      // Show UUID order number and reload page after printing
+      setTimeout(() => {
+        window.print();
+        window.location.reload();
+      }, 2000);
     } catch (error) {
       console.error("Error submitting order:", error);
       alert("Failed to submit order. Please try again.");
     }
   };
-
+  
  
-
-  const clearFormData = () => {
-    setOrderItems({});
-    setOrderNumber(uuidv4());
-    (document.getElementById("customer-name") as HTMLInputElement).value = "";
-    (document.getElementById("phone") as HTMLInputElement).value = "";
-    (document.getElementById("mobile") as HTMLInputElement).value = "";
-    (document.getElementById("special") as HTMLInputElement).value = "";
-    
-  };
+ 
 
   return (
     
@@ -253,49 +238,61 @@ export function ComprehensiveOrderForm() {
               </div>
             </div>
     
-            <Separator />
-    
-            {categories.map((category) => (
-              <div key={category._id} className="space-y-2">
-                <h3 className="font-bold">{category.categoryName}</h3>
-                {category.items.map((item) => (
+            
+        <Separator />
+        {categories
+          .filter((category) => category.isActive)
+          .map((category) => (
+            <div key={category._id} className="space-y-2">
+              <h3 className="font-bold">{category.categoryName}</h3>
+              {category.items
+                .filter((item) => item.isActive)
+                .map((item) => (
                   <div key={item._id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                     <Label className="flex-1">{item.itemName}</Label>
                     <div className="flex gap-4 items-center">
-                      <Input
-                        className="w-20"
-                        placeholder="kg"
-                        onChange={(e) =>
-                          handleItemChange(
-                            category.categoryName,
-                            item.itemName,
-                            Number(e.target.value)
-                          )
-                        }
-                      />
+                    <Input
+  className="w-20"
+  placeholder=""
+  onChange={(e) =>
+    handleItemChange(
+      category.categoryName,
+      item.itemName,
+      Number(e.target.value),
+      10,
+      orderItems[category.categoryName]?.[item.itemName]?.cutWanted || false,
+      item.unit // Passing the unit of the item
+    )
+  }
+/>
                       <span className="text-gray-500">Price: $10</span>
                     </div>
                     {category.categoryName === "CRUSTACEANS" && (
-                      <div>
+                      <div className="flex items-center gap-2">
                         <Label className="mr-2">Cut Wanted</Label>
-                        <Checkbox
-                          onChange={() =>
+                        <input
+                          type="checkbox"
+                          onChange={(e) =>
                             handleItemChange(
                               category.categoryName,
                               item.itemName,
                               orderItems[category.categoryName]?.[item.itemName]?.quantity || 0,
-                              10
+                              10,
+                              e.target.checked
                             )
+                          }
+                          checked={
+                            orderItems[category.categoryName]?.[item.itemName]?.cutWanted || false
                           }
                         />
                       </div>
-                    )}
+                    )} <span>{item.unit}</span>
                   </div>
                 ))}
-              </div>
-            ))}
-    
-            <Separator />
+            </div>
+          ))}
+
+        <Separator />
     
             <div>
               <Label htmlFor="special">Special Requests</Label>
@@ -311,53 +308,43 @@ export function ComprehensiveOrderForm() {
             <Separator />
     
             <Card>
-              <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
-              </CardHeader>
-              <CardContent>
-              {isOrderSubmitted && (
-                <div className="flex justify-between font-bold">
-                  <span>Order Number</span>
-                  <span>{orderNumber}</span>
-                </div>
-              )}
+  <CardHeader>
+    <CardTitle>Order Summary</CardTitle>
+  </CardHeader>
+  <CardContent>
+    {isOrderSubmitted && (
+      <div className="mb-4 font-semibold">
+        <span>Order Number: {orderNumber}</span>
+      </div>
+    )}
+    {Object.entries(orderItems).map(([category, items]) => (
+      <div key={category}>
+        <h4 className="font-semibold">{category}</h4>
+        {Object.entries(items).map(([item, details]) => (
+          <div key={item} className="flex justify-between">
+            <span>{item}</span>
+            <span>
+              {details.quantity} {details.unit} - ${details.quantity * details.price}
+            </span>
+            {details.cutWanted && <span>(Cut Wanted)</span>}
+          </div>
+        ))}
+      </div>
+    ))}
+    <div className="flex justify-between">
+      <span>Packaging Fee</span>
+      <span>$10</span>
+    </div>
+    <div className="flex justify-between font-bold">
+      <span>Total</span>
+      <span>${calculateTotal().toFixed(2)}</span>
+    </div>
+  </CardContent>
+  <CardFooter className="flex flex-col sm:flex-row gap-4">
+    <Button onClick={handleSubmit}>Submit Order</Button>
+  </CardFooter>
+</Card>
 
-                <div className="space-y-2">
-                  {Object.entries(orderItems).map(([category, items]) => (
-                    <div key={category}>
-                      <h4 className="font-semibold">{category}</h4>
-                      {Object.entries(items).map(([item, details]) => (
-                        <div key={item} className="flex justify-between">
-                          <span>{item}</span>
-                          <span>{details.quantity} kg - ${(details.quantity * details.price).toFixed(2)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                  <div className="flex justify-between">
-                    <span>Deposit</span>
-                    <span>$50</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Packaging Fee</span>
-                    <span>$10</span>
-                  </div>
-                  <div className="flex justify-between font-bold">
-                    <span>Total</span>
-                    <span>${calculateTotal().toFixed(2)}</span>
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter className="flex flex-col sm:flex-row gap-4">
-                <Button onClick={handleSubmit}>Submit Order</Button>
-                <Button onClick={() => window.print()} className="sm:ml-4">
-                  Print Order
-                </Button>
-                <Button onClick={clearFormData} className="sm:ml-4">
-                  Clear Data
-                </Button>
-              </CardFooter>
-            </Card>
           </div>
         </div>
       </div>

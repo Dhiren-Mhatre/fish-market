@@ -2,19 +2,19 @@ import express from "express";
 import {
   getOrderDetails,
   updateOrderDetails,
-  deleteOrderDetails,
+  getNextOrderNumber,
   createOrderDetails,
   getAllOrderDetails,
-  getLatestOrderNumber,
+  checkOrderNumber
 } from "../controllers/orderDetailsController.js";
 
 const router = express.Router();
 
 router.route("/").get(getAllOrderDetails).post(createOrderDetails);
-router.route("/:id").get(getOrderDetails).put(updateOrderDetails).delete(deleteOrderDetails);
+router.route("/:id").get(getOrderDetails).put(updateOrderDetails);
  
-
-router.get('/latest-order-number', getLatestOrderNumber);
+router.get('/order-number', getNextOrderNumber);
+router.post("/api/checkOrderNumber", checkOrderNumber);
  
 
 export default router;

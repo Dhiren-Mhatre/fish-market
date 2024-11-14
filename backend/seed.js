@@ -1,73 +1,73 @@
 import mongoose from "mongoose";
- 
+import dotenv from "dotenv";
+
 import Category from "./models/Category.js";
 import Item from "./models/Item.js";
- 
- 
-import dotenv from 'dotenv';
+
 dotenv.config();
+
 const itemsData = [
-  { itemName: "Large Green King Prawns", sequenceNumber: 1 },
-  { itemName: "Medium Green King Prawns", sequenceNumber: 2 },
-  { itemName: "Green Prawn Cutlets", sequenceNumber: 3 },
-  { itemName: "Large Cooked King Prawns", sequenceNumber: 4 },
-  { itemName: "Large Cooked Tiger Prawns", sequenceNumber: 5 },
-  { itemName: "Medium Cooked Tiger Prawns", sequenceNumber: 6 },
-  { itemName: "Cooked Crystal Bays", sequenceNumber: 7 },
-  { itemName: "Wild Caught Tiger Prawns", sequenceNumber: 8 },
-  { itemName: "Cooked Blue Swimmer Crabs", sequenceNumber: 9 },
-  { itemName: "Green Blue Swimmer Crabs", sequenceNumber: 10 },
-  { itemName: "Large Snapper - 2kg to 4kg", sequenceNumber: 11 },
-  { itemName: "Medium Snapper - 1kg to 2kg", sequenceNumber: 12 },
-  { itemName: "Chris Boiton Coral Trout", sequenceNumber: 13 },
-  { itemName: "Ocean Trout", sequenceNumber: 14 },
-  { itemName: "Salmon - 2 to 3kg", sequenceNumber: 15 },
-  { itemName: "Salmon - 3 to 4kg", sequenceNumber: 16 },
-  { itemName: "Sydney Rock Oysters", sequenceNumber: 17 },
-  { itemName: "Large Sydney Rock Oysters", sequenceNumber: 18 },
-  { itemName: "Pacific Oysters", sequenceNumber: 19 },
-  { itemName: "Unshucked LIVE Sydney Rocks", sequenceNumber: 20 },
-  { itemName: "Black Mussels 1kg Bag", sequenceNumber: 21 },
-  { itemName: "Sashimi Salmon", sequenceNumber: 22 },
-  { itemName: "Sashimi Tuna", sequenceNumber: 23 },
-  { itemName: "100g Smoked Salmon", sequenceNumber: 24 },
-  { itemName: "250g Smoked Salmon", sequenceNumber: 25 },
-  { itemName: "500g Smoked Salmon", sequenceNumber: 26 },
-  { itemName: "1kg Smoked Salmon", sequenceNumber: 27 },
-  { itemName: "50g Salmon Roe", sequenceNumber: 28 },
-  { itemName: "100g Salmon Roe", sequenceNumber: 29 },
-  { itemName: "Palanco Caviar 30g", sequenceNumber: 30 },
-  { itemName: "Palanco Caviar 50g", sequenceNumber: 31 },
-  { itemName: "Cocktail Sauce", sequenceNumber: 32 },
-  { itemName: "Tartare Sauce", sequenceNumber: 33 },
-  { itemName: "WA/TAS/SA Lobsters", sequenceNumber: 34 },
-  { itemName: "Local Lobsters", sequenceNumber: 35 },
-  { itemName: "Lobster Tails - Raw", sequenceNumber: 36 },
-  { itemName: "Cooked Bugs", sequenceNumber: 37 },
-  { itemName: "King Crab Legs", sequenceNumber: 38 },
-  { itemName: "Live Mud Crabs", sequenceNumber: 39 },
-  { itemName: "Barramundi Fillets", sequenceNumber: 40 },
-  { itemName: "Salmon Fillets Skin On", sequenceNumber: 41 },
-  { itemName: "Sea Perch Fillets", sequenceNumber: 42 },
+  { itemName: "Large Green King Prawns", order: 1, unit: "kg" },
+  { itemName: "Medium Green King Prawns", order: 2, unit: "kg" },
+  { itemName: "Green Prawn Cutlets", order: 3, unit: "kg" },
+  { itemName: "Large Cooked King Prawns", order: 4, unit: "kg" },
+  { itemName: "Large Cooked Tiger Prawns", order: 5, unit: "kg" },
+  { itemName: "Medium Cooked Tiger Prawns", order: 6, unit: "kg" },
+  { itemName: "Cooked Crystal Bays", order: 7, unit: "kg" },
+  { itemName: "Wild Caught Tiger Prawns", order: 8, unit: "kg" },
+  { itemName: "Cooked Blue Swimmer Crabs", order: 9, unit: "pcs" },
+  { itemName: "Green Blue Swimmer Crabs", order: 10, unit: "pcs" },
+  { itemName: "Large Snapper - 2kg to 4kg", order: 11, unit: "pos" },
+  { itemName: "Medium Snapper - 1kg to 2kg", order: 12, unit: "pos" },
+  { itemName: "Chris Boiton Coral Trout", order: 13, unit: "pos" },
+  { itemName: "Ocean Trout", order: 14, unit: "pos" },
+  { itemName: "Salmon - 2 to 3kg", order: 15, unit: "pcs" },
+  { itemName: "Salmon - 3 to 4kg", order: 16, unit: "pcs" },
+  { itemName: "Sydney Rock Oysters", order: 17, unit: "doz" },
+  { itemName: "Large Sydney Rock Oysters", order: 18, unit: "doz" },
+  { itemName: "Pacific Oysters", order: 19, unit: "doz" },
+  { itemName: "Unshucked LIVE Sydney Rocks", order: 20, unit: "doz" },
+  { itemName: "Black Mussels 1kg Bag", order: 21, unit: "doz" },
+  { itemName: "Sashimi Salmon", order: 22, unit: "kg" },
+  { itemName: "Sashimi Tuna", order: 23, unit: "kg" },
+  { itemName: "100g Smoked Salmon", order: 24, unit: "pkt" },
+  { itemName: "250g Smoked Salmon", order: 25, unit: "pkt" },
+  { itemName: "500g Smoked Salmon", order: 26, unit: "pkt" },
+  { itemName: "1kg Smoked Salmon", order: 27, unit: "pkt" },
+  { itemName: "50g Salmon Roe", order: 28, unit: "jar" },
+  { itemName: "100g Salmon Roe", order: 29, unit: "jar" },
+  { itemName: "Palanco Caviar 30g", order: 30, unit: "jar" },
+  { itemName: "Palanco Caviar 50g", order: 31, unit: "jar" },
+  { itemName: "Cocktail Sauce", order: 32, unit: "pcs" },
+  { itemName: "Tartare Sauce", order: 33, unit: "pcs" },
+  { itemName: "WA/TAS/SA Lobsters", order: 34, unit: "pcs" },
+  { itemName: "Local Lobsters", order: 35, unit: "pcs" },
+  { itemName: "Lobster Tails - Raw", order: 36, unit: "pcs" },
+  { itemName: "Cooked Bugs", order: 37, unit: "pcs" },
+  { itemName: "King Crab Legs", order: 38, unit: "pcs" },
+  { itemName: "Live Mud Crabs", order: 39, unit: "pcs" },
+  { itemName: "Barramundi Fillets", order: 40, unit: "pos" },
+  { itemName: "Salmon Fillets Skin On", order: 41, unit: "pcs" },
+  { itemName: "Sea Perch Fillets", order: 42, unit: "pos" },
 ];
 
 const categoriesData = [
   {
     categoryName: "RAW PRAWNS",
     isActive: true,
-    sequenceNumber: 1,
+    order: 1,
     items: ["Large Green King Prawns", "Medium Green King Prawns", "Green Prawn Cutlets"],
   },
   {
     categoryName: "COOKED PRAWNS",
     isActive: true,
-    sequenceNumber: 2,
+    order: 2,
     items: ["Large Cooked King Prawns", "Large Cooked Tiger Prawns", "Medium Cooked Tiger Prawns", "Cooked Crystal Bays"],
   },
   {
     categoryName: "WHOLE FISH",
     isActive: true,
-    sequenceNumber: 3,
+    order: 3,
     items: [
       "Large Snapper - 2kg to 4kg",
       "Medium Snapper - 1kg to 2kg",
@@ -80,37 +80,37 @@ const categoriesData = [
   {
     categoryName: "MOLLUSCS",
     isActive: true,
-    sequenceNumber: 4,
+    order: 4,
     items: ["Sydney Rock Oysters", "Large Sydney Rock Oysters", "Pacific Oysters", "Unshucked LIVE Sydney Rocks", "Black Mussels 1kg Bag"],
   },
   {
     categoryName: "SMOKED",
     isActive: true,
-    sequenceNumber: 5,
+    order: 5,
     items: ["100g Smoked Salmon", "250g Smoked Salmon", "500g Smoked Salmon", "1kg Smoked Salmon"],
   },
   {
     categoryName: "SAUCES",
     isActive: true,
-    sequenceNumber: 6,
+    order: 6,
     items: ["Cocktail Sauce", "Tartare Sauce"],
   },
   {
     categoryName: "CRUSTACEANS",
     isActive: true,
-    sequenceNumber: 7,
+    order: 7,
     items: ["WA/TAS/SA Lobsters", "Local Lobsters", "Lobster Tails - Raw", "Cooked Bugs", "King Crab Legs", "Live Mud Crabs"],
   },
   {
     categoryName: "FILLETS",
     isActive: true,
-    sequenceNumber: 8,
+    order: 8,
     items: ["Barramundi Fillets", "Salmon Fillets Skin On", "Sea Perch Fillets"],
   },
   {
     categoryName: "CAVIAR",
     isActive: true,
-    sequenceNumber: 9,
+    order: 9,
     items: ["50g Salmon Roe", "100g Salmon Roe", "Palanco Caviar 30g", "Palanco Caviar 50g"],
   },
 ];
@@ -119,23 +119,27 @@ const seed = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
     console.log("Connected to MongoDB");
- 
+
+    // Clear existing data
     await Category.deleteMany();
     await Item.deleteMany();
-    
 
+    // Insert items
     const createdItems = await Item.insertMany(itemsData);
 
+    // Map item names to item IDs
     const itemMap = createdItems.reduce((acc, item) => {
       acc[item.itemName] = item._id;
       return acc;
     }, {});
 
+    // Update categories to use item IDs instead of names
     const updatedCategories = categoriesData.map((category) => ({
       ...category,
       items: category.items.map((itemName) => itemMap[itemName]),
     }));
 
+    // Insert categories
     await Category.insertMany(updatedCategories);
 
     console.log("Data seeded successfully!");

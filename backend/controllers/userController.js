@@ -1,20 +1,22 @@
 import User from '../models/User.js';
 
 // Create a new user
+// Create a new user
 export const createUser = async (req, res) => {
-  const { name, phone, mobile } = req.body;
+  const { name, phone, mobile, orders } = req.body;  // orders will be passed as an array
 
   try {
-    const newUser = new User({
+    const user = new User({
       name,
       phone,
       mobile,
-      orders: [],
+      orders: orders || [],  // Make sure orders is an array or set it to empty if not provided
     });
 
-    await newUser.save();
-    return res.status(201).json({ success: true, message: 'User created successfully', data: newUser });
+    await user.save();
+    return res.status(201).json({ success: true, message: 'User created successfully', data: user });
   } catch (error) {
+    console.error(error); // Log error to help with debugging
     return res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -46,20 +48,27 @@ export const getUserById = async (req, res) => {
 };
 
 // Update user details
+// Update user details
 export const updateUser = async (req, res) => {
   const { userId } = req.params;
-  const { name, phone, mobile, orders } = req.body;
+  const { name, phone, mobile, orderNumber } = req.body;
 
   try {
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { name, phone, mobile, orders },
-      { new: true } // return updated user
-    );
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
+
+    // Add the new order number to the existing orders array
+    user.orders.push(orderNumber);
+
+    // Update the user with new details
+    user.name = name;
+    user.phone = phone;
+    user.mobile = mobile;
+
+    await user.save();
 
     return res.status(200).json({ success: true, message: 'User updated successfully', data: user });
   } catch (error) {

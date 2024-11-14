@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const categorySchema = new mongoose.Schema({
   categoryName: { type: String, required: true },
   isActive: { type: Boolean, default: true },
-  sequenceNumber: { type: Number, required: true },
+  order: { type: Number, default: 0 },  // Renamed from `sequenceNumber` to `order` for consistency
   items: [
     {
       type: mongoose.Schema.Types.ObjectId,
