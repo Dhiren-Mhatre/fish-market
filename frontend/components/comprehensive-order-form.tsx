@@ -100,15 +100,40 @@ export function ComprehensiveOrderForm() {
     });
     return total + 10;
   };
+  const handleItemChange = (
+    category: string,
+    item: string,
+    quantity: number,
+    price: number = 10,
+    cutWanted: boolean = false,
+    unit: string
+  ) => {
+    if (quantity < 0 || quantity > 100 || isNaN(quantity)) {
+      alert("Item quantity must be numeric and less than or equal to 100.");
+      return;
+    }
+  
+    setOrderItems((prev) => ({
+      ...prev,
+      [category]: {
+        ...prev[category],
+        [item]: {
+          quantity: quantity || 0,
+          price,
+          cutWanted,
+          unit,
+        },
+      },
+    }));
+  };
   const handleSubmit = async () => {
     const customerName = (document.getElementById("customer-name") as HTMLInputElement)?.value;
     const phone = (document.getElementById("phone") as HTMLInputElement)?.value;
     const mobile = (document.getElementById("mobile") as HTMLInputElement)?.value;
     const specialRequest = (document.getElementById("special") as HTMLInputElement)?.value;
   
-    // Validation for phone and mobile numbers
     const isValidPhoneNumber = (num: string) => /^\d{10}$/.test(num);
-  
+
     if (!customerName || !phone || !mobile || (!xmasChecked && !nyeChecked)) {
       alert("Please fill all the required fields and acknowledge the terms!");
       return;
@@ -118,6 +143,7 @@ export function ComprehensiveOrderForm() {
       alert("Phone and mobile numbers must be numeric and exactly 10 digits.");
       return;
     }
+  
   
     // Order details object with UUID
     const orderDetailsData = {
@@ -147,6 +173,14 @@ export function ComprehensiveOrderForm() {
       });
     });
   
+    // Save user and order data
+    const userData = {
+      name: customerName,
+      phone,
+      mobile,
+      orders: [orderNumber],
+    };
+  
     try {
       await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users`, userData);
       await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/order-details`, orderDetailsData);
@@ -164,40 +198,14 @@ export function ComprehensiveOrderForm() {
       // Store the order in localStorage for the Order Summary page
       localStorage.setItem("orderDetails", JSON.stringify(orderDetailsData));
   
-      window.location.href = "/order-summary";
+      window.location.href = '/order-summary';
     } catch (error) {
       console.error("Error submitting order:", error);
       alert("Failed to submit order. Please try again.");
     }
   };
   
-  const handleItemChange = (
-    category: string,
-    item: string,
-    quantity: number,
-    price: number = 10,
-    cutWanted: boolean = false,
-    unit: string
-  ) => {
-    if (quantity < 0 || quantity > 100 || isNaN(quantity)) {
-      alert("Item quantity must be numeric and less than or equal to 100.");
-      return;
-    }
-  
-    setOrderItems((prev) => ({
-      ...prev,
-      [category]: {
-        ...prev[category],
-        [item]: {
-          quantity: quantity || 0,
-          price,
-          cutWanted,
-          unit,
-        },
-      },
-    }));
-  };
-  
+
 
   return (
     <div className="max-w-7xl mx-auto p-6 bg-blue-200  space-y-8">
