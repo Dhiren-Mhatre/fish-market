@@ -37,59 +37,96 @@ export default function OrderSummaryPage() {
   };
 
   if (!orderDetails) {
-    return <div className="text-xl font-semibold">Loading...</div>;
+    return <div style={{ fontSize: "1.25rem", fontWeight: "600" }}>Loading...</div>;
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
-      <div className="border border-gray-300 rounded-lg shadow-lg p-6 bg-white">
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-blue-600">Order Summary</h1>
+    <div style={{ maxWidth: "768px", margin: "0 auto", padding: "1.5rem", gap: "2rem" }}>
+      <div
+        style={{
+          border: "1px solid #d1d5db",
+          borderRadius: "0.5rem",
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+          padding: "1.5rem",
+          backgroundColor: "white",
+        }}
+      >
+        <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+          <h1 style={{ fontSize: "2rem", fontWeight: "bold", color: "#2563eb" }}>Order Summary</h1>
         </div>
 
-        <div className="space-y-4">
+        <div style={{ gap: "1rem" }}>
           <div>
-            <h2 className="font-semibold text-xl">Order Number: {orderDetails.orderNumber}</h2>
-            <p className="text-lg">Customer Name: {orderDetails.customerName}</p>
-            <p className="text-lg">Phone: {orderDetails.phone}</p>
-            <p className="text-lg">Mobile: {orderDetails.mobile}</p>
-            <p className="text-lg">Order Type: {orderDetails.type}</p>
-            <p className="text-lg">Special Request: {orderDetails.specialRequest || "N/A"}</p>
-            <p className="text-lg">
+            <h2 style={{ fontWeight: "600", fontSize: "1.25rem" }}>
+              Order Number: {orderDetails.orderNumber}
+            </h2>
+            <p style={{ fontSize: "1rem" }}>Customer Name: {orderDetails.customerName}</p>
+            <p style={{ fontSize: "1rem" }}>Phone: {orderDetails.phone}</p>
+            <p style={{ fontSize: "1rem" }}>Mobile: {orderDetails.mobile}</p>
+            <p style={{ fontSize: "1rem" }}>Event Type: {orderDetails.type}</p>
+            <p style={{ fontSize: "1rem" }}>
+              Special Request: {orderDetails.specialRequest || "N/A"}
+            </p>
+            <p style={{ fontSize: "1rem" }}>
               Order Date: {new Date(orderDetails.orderDate).toLocaleDateString()}
             </p>
           </div>
 
-          <div className="border-b border-gray-300 py-4">
-            <h3 className="font-semibold text-xl">Items:</h3>
+          <div style={{ borderBottom: "1px solid #d1d5db", padding: "1rem 0" }}>
+            <h3 style={{ fontWeight: "600", fontSize: "1.25rem" }}>Items:</h3>
             {orderDetails.items.map((item: Item, index: number) => (
-              <div key={index} className="flex justify-between items-center py-2 border-b last:border-0">
-                <span className="font-medium text-lg">
+              <div
+                key={index}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "0.5rem 0",
+                  borderBottom: index < orderDetails.items.length - 1 ? "1px solid #d1d5db" : "none",
+                }}
+              >
+                <span style={{ fontWeight: "500", fontSize: "1rem" }}>
                   {item.itemName} ({item.quantity} {item.unit})
                 </span>
-                <div className="flex items-center space-x-2">
-                  <span className="text-lg font-semibold">${(item.price * item.quantity).toFixed(2)}</span>
-                  {item.cutWanted && <span className="text-sm text-green-500">(Cut Wanted)</span>}
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span style={{ fontSize: "1rem", fontWeight: "600" }}>
+                    ${(item.price * item.quantity).toFixed(2)}
+                  </span>
+                  {item.cutWanted && (
+                    <span style={{ fontSize: "0.875rem", color: "#16a34a" }}>(Cut Wanted)</span>
+                  )}
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="flex justify-between font-semibold text-xl mt-4">
+          <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "600", fontSize: "1.25rem", marginTop: "1rem" }}>
             <span>Packaging Fee</span>
-            <span className="text-lg">${orderDetails.packagingFee.toFixed(2)}</span>
+            <span style={{ fontSize: "1rem" }}>${orderDetails.packagingFee.toFixed(2)}</span>
           </div>
 
-          <div className="flex justify-between font-bold text-2xl mt-4">
+          <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "700", fontSize: "1.5rem", marginTop: "1rem" }}>
             <span>Total</span>
-            <span className="text-2xl">${orderDetails.total.toFixed(2)}</span>
+            <span style={{ fontSize: "1.5rem" }}>${orderDetails.total.toFixed(2)}</span>
           </div>
         </div>
 
-        <div className="mt-6 text-center">
+        <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
           <button
             onClick={handlePrint}
-            className="cursor-pointer py-2 px-6 bg-blue-600 text-white text-lg font-bold rounded-md hover:bg-blue-700 transition duration-300"
+            style={{
+              cursor: "pointer",
+              padding: "0.5rem 1.5rem",
+              backgroundColor: "#2563eb",
+              color: "white",
+              fontSize: "1rem",
+              fontWeight: "700",
+              borderRadius: "0.375rem",
+              border: "none",
+              transition: "background-color 0.3s",
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#1e40af")}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#2563eb")}
           >
             Print Order
           </button>
