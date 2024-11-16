@@ -62,7 +62,23 @@ export function ComprehensiveOrderForm() {
   const [xmasChecked, setXmasChecked] = useState(false);
   const [nyeChecked, setNyeChecked] = useState(false);
   const [isOrderSubmitted, setIsOrderSubmitted] = useState(false);
-
+  const [phoneError, setPhoneError] = useState(false);
+  const [mobileError, setMobileError] = useState(false);
+  
+  const handlePhoneBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (e.target.value.length !== 10 && !phoneError) {
+      setPhoneError(true);
+      alert("Phone number must be exactly 10 digits.");
+    }
+  };
+  
+  const handleMobileBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (e.target.value.length !== 10 && !mobileError) {
+      setMobileError(true);
+      alert("Mobile number must be exactly 10 digits.");
+    }
+  };
+  
   const handleXmasChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setXmasChecked(e.target.checked);
     if (e.target.checked) setNyeChecked(false);
@@ -276,65 +292,57 @@ export function ComprehensiveOrderForm() {
 
         <div className="grid gap-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="customer-name">Customer Name</Label>
-              <Input id="customer-name" className="w-full" />
-            </div>
-            <div>
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
-                type="tel"
-                className="w-full"
-                maxLength={10}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-                  if (value.length <= 10) e.target.value = value; // Ensure only 10 digits
-                }}
-                onBlur={(e) => {
-                  if (e.target.value.length !== 10) {
-                    alert("Phone number must be exactly 10 digits.");
-                  }
-                }}
-              />
-            </div>
+          <div>
+          <Label htmlFor="customer-name">Customer Name</Label>
+          <Input id="customer-name" className="w-full" />
+        </div>
+        <div>
+          <Label htmlFor="phone">Phone</Label>
+          <Input
+            id="phone"
+            type="tel"
+            className="w-full"
+            maxLength={10}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+              if (value.length <= 10) e.target.value = value; // Ensure only 10 digits
+            }}
+            onBlur={handlePhoneBlur} // Call handlePhoneBlur function
+          />
+        </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="mobile">Mobile</Label>
-              <Input
-                id="mobile"
-                type="tel"
-                className="w-full"
-                maxLength={10}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-                  if (value.length <= 10) e.target.value = value; // Ensure only 10 digits
-                }}
-                onBlur={(e) => {
-                  if (e.target.value.length !== 10) {
-                    alert("Mobile number must be exactly 10 digits.");
-                  }
-                }}
-              />
-            </div>
-            <div>
-              <Label>Pick up Time</Label>
-              <Input
-                readOnly
-                defaultValue="10am till 1pm"
-                className="bg-gray-200 cursor-not-allowed w-full"
-              />
-            </div>
-            <div>
-              <Label>Date</Label>
-              <Input
-                readOnly
-                value={date}
-                className="bg-gray-200 cursor-not-allowed w-full"
-              />
-            </div>
+            <Label htmlFor="mobile">Mobile</Label>
+          <Input
+            id="mobile"
+            type="tel"
+            className="w-full"
+            maxLength={10}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+              if (value.length <= 10) e.target.value = value; // Ensure only 10 digits
+            }}
+            onBlur={handleMobileBlur} // Call handleMobileBlur function
+          />
+        </div>
+        <div>
+          <Label>Pick up Time</Label>
+          <Input
+            readOnly
+            defaultValue="10am till 1pm"
+            className="bg-gray-200 cursor-not-allowed w-full"
+          />
+        </div>
+        <div>
+          <Label>Date</Label>
+          <Input
+            readOnly
+            value={date}
+            className="bg-gray-200 cursor-not-allowed w-full"
+          />
+        </div>
           </div>
 
           <Separator />
