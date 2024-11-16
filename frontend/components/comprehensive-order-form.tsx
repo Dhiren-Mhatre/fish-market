@@ -62,23 +62,42 @@ export function ComprehensiveOrderForm() {
   const [xmasChecked, setXmasChecked] = useState(false);
   const [nyeChecked, setNyeChecked] = useState(false);
   const [isOrderSubmitted, setIsOrderSubmitted] = useState(false);
-  const [phoneError, setPhoneError] = useState(false);
-  const [mobileError, setMobileError] = useState(false);
-  
-  const handlePhoneBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (e.target.value.length !== 10 && !phoneError) {
-      setPhoneError(true);
-      alert("Phone number must be exactly 10 digits.");
+  const [phone, setPhone] = useState("")
+  const [mobile, setMobile] = useState("")
+  const [phoneError, setPhoneError] = useState(false)
+  const [mobileError, setMobileError] = useState(false)
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "")
+    setPhone(value)
+    setPhoneError(value.length !== 10 && value.length > 0)
+  }
+
+  const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "")
+    setMobile(value)
+    setMobileError(value.length !== 10 && value.length > 0)
+  }
+
+  const handlePhoneBlur = () => {
+    if (phone.length !== 10 && phone.length > 0) {
+       
+      const phoneInput = document.getElementById("phone") as HTMLInputElement;
+      phoneInput.focus();
     }
-  };
+  }
   
-  const handleMobileBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (e.target.value.length !== 10 && !mobileError) {
-      setMobileError(true);
-      alert("Mobile number must be exactly 10 digits.");
+  const handleMobileBlur = () => {
+    if (mobile.length !== 10 && mobile.length > 0) {
+       
+      const mobileInput = document.getElementById("mobile") as HTMLInputElement;
+    mobileInput.focus();
     }
-  };
+  }
   
+
+  
+
   const handleXmasChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setXmasChecked(e.target.checked);
     if (e.target.checked) setNyeChecked(false);
@@ -126,12 +145,13 @@ export function ComprehensiveOrderForm() {
     let total = 0;
     Object.values(orderItems).forEach((category) => {
       Object.values(category).forEach((item) => {
-        total += item.quantity * item.price;
+        total += (item.quantity || 0) * (item.price || 0); // Multiply quantity by price from backend
       });
     });
-    return total + 10;
+    return total + 10; // Add packaging fee
   };
- const handleItemChange = (
+
+  const handleItemChange = (
     category: string,
     item: string,
     quantity: number,
@@ -140,8 +160,8 @@ export function ComprehensiveOrderForm() {
     unit: string
   ) => {
     if (quantity < 0 || quantity > 100 || isNaN(quantity)) {
-      alert("Item quantity must be numeric and less than or equal to 100.")
-      return
+      alert("Item quantity must be numeric and less than or equal to 100.");
+      return;
     }
 
     setOrderItems((prev) => ({
@@ -150,13 +170,13 @@ export function ComprehensiveOrderForm() {
         ...prev[category],
         [item]: {
           quantity: quantity || 0,
-          price,
+          price: price || 0, // Use price provided from backend
           cutWanted,
           unit,
         },
       },
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = async () => {
     const customerName = (
@@ -292,57 +312,63 @@ export function ComprehensiveOrderForm() {
 
         <div className="grid gap-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-          <Label htmlFor="customer-name">Customer Name</Label>
-          <Input id="customer-name" className="w-full" />
-        </div>
-        <div>
-          <Label htmlFor="phone">Phone</Label>
-          <Input
-            id="phone"
-            type="tel"
-            className="w-full"
-            maxLength={10}
-            onChange={(e) => {
-              const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-              if (value.length <= 10) e.target.value = value; // Ensure only 10 digits
-            }}
-            onBlur={handlePhoneBlur} // Call handlePhoneBlur function
-          />
-        </div>
+            <div>
+              <Label htmlFor="customer-name">Customer Name</Label>
+              <Input id="customer-name" className="w-full" />
+            </div>
+            <div>
+            <Label htmlFor="phone">Phone</Label>
+        <Input
+          id="phone"
+          type="text"
+          value={phone}
+          maxLength={10}
+          onChange={handlePhoneChange}
+          onBlur={handlePhoneBlur}
+          className={`w-full ${phoneError ? "border-red-500" : ""}`}
+        />
+        {phoneError && (
+          <p className="text-red-500 text-sm mt-1">
+            Phone number must be exactly 10 digits.
+          </p>
+        )}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
             <Label htmlFor="mobile">Mobile</Label>
-          <Input
-            id="mobile"
-            type="tel"
-            className="w-full"
-            maxLength={10}
-            onChange={(e) => {
-              const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-              if (value.length <= 10) e.target.value = value; // Ensure only 10 digits
-            }}
-            onBlur={handleMobileBlur} // Call handleMobileBlur function
-          />
-        </div>
-        <div>
-          <Label>Pick up Time</Label>
-          <Input
-            readOnly
-            defaultValue="10am till 1pm"
-            className="bg-gray-200 cursor-not-allowed w-full"
-          />
-        </div>
-        <div>
-          <Label>Date</Label>
-          <Input
-            readOnly
-            value={date}
-            className="bg-gray-200 cursor-not-allowed w-full"
-          />
-        </div>
+        <Input
+          id="mobile"
+          type="text"
+          value={mobile}
+          maxLength={10}
+          onChange={handleMobileChange}
+          onBlur={handleMobileBlur}
+          className={`w-full ${mobileError ? "border-red-500" : ""}`}
+        />
+        {mobileError && (
+          <p className="text-red-500 text-sm mt-1">
+            Mobile number must be exactly 10 digits.
+          </p>
+        )}
+            </div>
+            <div>
+              <Label>Pick up Time</Label>
+              <Input
+                readOnly
+                defaultValue="10am till 1pm"
+                className="bg-gray-200 cursor-not-allowed w-full"
+              />
+            </div>
+            <div>
+              <Label>Date</Label>
+              <Input
+                readOnly
+                value={date}
+                className="bg-gray-200 cursor-not-allowed w-full"
+              />
+            </div>
           </div>
 
           <Separator />
@@ -365,20 +391,20 @@ export function ComprehensiveOrderForm() {
                       <div className="flex items-center gap-2 flex-grow sm:flex-grow-0">
                         <Input
                           className="w-20"
-                          placeholder=""
+                          placeholder="Quantity"
+                          type="number"
                           onChange={(e) =>
                             handleItemChange(
                               category.categoryName,
                               item.itemName,
-                              Number(e.target.value),
-                              10,
-                              orderItems[category.categoryName]?.[item.itemName]
-                                ?.cutWanted || false,
+                              parseInt(e.target.value, 10) || 0,
+                              item.price || 0, // Pass the backend-provided price
+                              false,
                               item.unit
                             )
                           }
                         />
-                        <span className="text-gray-500 whitespace-nowrap">
+                        <span className="text-black-800 font-bold whitespace-nowrap">
                           ${item.price || 0}
                         </span>
                       </div>
