@@ -403,12 +403,12 @@ export function ComprehensiveOrderForm() {
                               item.unit
                             )
                           }
-                        />
-                        <span className="text-black-800 font-bold whitespace-nowrap">
+                        /><span className="text-lg">{item.unit}</span>
+                      
+                      </div>
+                      <span className="text-black-800 font-bold whitespace-nowrap">
                           ${item.price || 0}
                         </span>
-                      </div>
-                      <span className="text-lg">{item.unit}</span>
                       {category.categoryName === "CRUSTACEANS" && (
                         <div className="flex items-center gap-2 ml-auto sm:ml-0">
                           <Label className="mr-2 whitespace-nowrap">

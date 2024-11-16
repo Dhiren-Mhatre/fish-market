@@ -30,12 +30,15 @@ export default function OrderSummaryPage() {
       setOrderDetails(JSON.parse(storedOrderDetails) as OrderDetails);
     }
   }, []);
-
   const handlePrint = () => {
     window.print();
-    window.location.href = "/"; // Redirect to main page after printing
+  
+    // Set a timeout of 3 seconds before redirecting
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 3000); // 3000 ms = 3 seconds
   };
-
+  
   if (!orderDetails) {
     return <div style={{ fontSize: "1.25rem", fontWeight: "600" }}>Loading...</div>;
   }
