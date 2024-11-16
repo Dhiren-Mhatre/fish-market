@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -13,7 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import axios from "axios";
-
+import Logo from '@/components/logo.png'
 const generateOrderNumber = () => Math.floor(10000 + Math.random() * 90000).toString();
 
 interface OrderItem {
@@ -210,6 +211,15 @@ export function ComprehensiveOrderForm() {
   return (
     <div className="max-w-7xl mx-auto p-6 bg-blue-200  space-y-8">
     <div className="border rounded-lg p-6">
+    <div className="flex justify-center mb-6">
+        <Image
+          src={Logo} // Path relative to the 'public' directory
+          alt="Logo"
+          width={150} // Adjust width as needed
+          height={150} // Adjust height as needed
+          priority // Ensures the logo is loaded quickly
+        />
+      </div>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">ORDER FORM</h1>
         <div className="flex items-center gap-4 mt-4 sm:mt-0">
@@ -242,14 +252,42 @@ export function ComprehensiveOrderForm() {
           </div>
           <div>
             <Label htmlFor="phone">Phone</Label>
-            <Input id="phone" type="tel" className="w-full" />
+            <Input
+    id="phone"
+    type="tel"
+    className="w-full"
+    maxLength={10}
+    onChange={(e) => {
+      const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+      if (value.length <= 10) e.target.value = value; // Ensure only 10 digits
+    }}
+    onBlur={(e) => {
+      if (e.target.value.length !== 10) {
+        alert("Phone number must be exactly 10 digits.");
+      }
+    }}
+  />
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <Label htmlFor="mobile">Mobile</Label>
-            <Input id="mobile" type="tel" className="w-full" />
+            <Input
+    id="mobile"
+    type="tel"
+    className="w-full"
+    maxLength={10}
+    onChange={(e) => {
+      const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+      if (value.length <= 10) e.target.value = value; // Ensure only 10 digits
+    }}
+    onBlur={(e) => {
+      if (e.target.value.length !== 10) {
+        alert("Mobile number must be exactly 10 digits.");
+      }
+    }}
+  />
           </div>
           <div>
             <Label>Pick up Time</Label>
