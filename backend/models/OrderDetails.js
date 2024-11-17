@@ -1,5 +1,4 @@
-import mongoose from 'mongoose';
-
+import mongoose from "mongoose";
 const orderDetailsSchema = new mongoose.Schema({
   orderNumber: { type: String, required: true, unique: true },
   customerName: { type: String, required: true },
@@ -10,20 +9,25 @@ const orderDetailsSchema = new mongoose.Schema({
   specialRequest: { type: String },
   items: [
     {
-      item: { type: mongoose.Schema.Types.ObjectId, ref: 'Item' },
+      itemName: { type: String, required: true }, // Store item name directly
       quantity: { type: Number },
       price: { type: Number },
-      unit: { type: String, required: true },  // Added unit field
+      unit: { type: String, required: true },
     },
   ],
   subtotal: { type: Number },
   packagingFee: { type: Number, default: 5 },
   total: { type: Number },
+  status: {
+    type: String,
+    enum: ['Pending', 'Delivered'],
+    default: 'Pending',
+  },
   lastUpdated: { type: Date, default: Date.now },
 });
 
-// Middleware to update the `lastUpdated` field before saving the document
-orderDetailsSchema.pre('save', function(next) {
+// Middleware to update the lastUpdated field
+orderDetailsSchema.pre('save', function (next) {
   this.lastUpdated = Date.now();
   next();
 });

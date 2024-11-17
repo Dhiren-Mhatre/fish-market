@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const itemSchema = new mongoose.Schema({
   itemName: { type: String, required: true },
@@ -6,7 +6,8 @@ const itemSchema = new mongoose.Schema({
   order: { type: Number, required: true },
   lastUpdated: { type: Date, default: Date.now },
   isActive: { type: Boolean, default: true },
-  unit: { type: String, required: true }  // New field for unit
+  unit: { type: String, required: true },
+  price: { type: Number, required: true }, // New field for price
 });
 
 itemSchema.pre('save', function (next) {

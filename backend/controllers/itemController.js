@@ -13,10 +13,13 @@ export const getItem = async (req, res) => {
 
 export const updateItem = async (req, res) => {
   const { id } = req.params;
-  const { order, unit } = req.body;
+  const { order, unit, price } = req.body;
+
   try {
     const item = await Item.findById(id);
     if (!item) return res.status(404).json({ message: "Item not found" });
+
+    if (price !== undefined) item.price = price; // Update price if provided
 
     if (order !== undefined) {
       const itemsToUpdate = await Item.find({ order: { $gte: order } }).sort({ order: 1 });
@@ -27,7 +30,7 @@ export const updateItem = async (req, res) => {
       item.order = order;
     }
 
-    if (unit) item.unit = unit;  // Update unit if provided
+    if (unit) item.unit = unit; // Update unit if provided
     Object.assign(item, req.body);
     await item.save();
 
@@ -55,7 +58,9 @@ export const deleteItem = async (req, res) => {
 };
 export const createItem = async (req, res) => {
   try {
-    const { order, unit } = req.body;
+    const { order, unit, price } = req.body;
+
+    if (!price) return res.status(400).json({ message: "Price is required" });
 
     if (order !== undefined) {
       await Item.updateMany(
