@@ -2,6 +2,7 @@ import { useState } from 'react';
 import SearchBar from '../components/Dashboard/SearchBar';
 import OrderCard from '../components/Dashboard/OrderCard';
 import { fetchOrderDetails } from '../api/orderDetails';
+import './Dashboard.css'; // Import the styles for this component
 
 const Dashboard = () => {
   const [order, setOrder] = useState(null);
@@ -19,11 +20,14 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="p-8 ">
-      <h1 className="text-2xl font-bold text-center mb-6">Fish Market Dashboard</h1>
+    <div className="dashboard">
+      <div className="logo-container">
+        <img src="/logo.png" alt="Fish Market Logo" className="logo" />
+      </div>
+      <h1 className="dashboard-header">Fish Market Dashboard</h1>
       <SearchBar onSearch={handleSearch} />
-      {error && <p className="text-red-500 text-center">{error}</p>}
-      {order && <OrderCard order={order} />}
+      {error && <p className="error-message">{error}</p>}
+      {order && <OrderCard order={order} refreshOrders={handleSearch} />}
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import './SearchBar.css'; // Import the styles for this component
 
 const SearchBar = ({ onSearch }) => {
   const [query, setQuery] = useState('');
@@ -10,17 +11,17 @@ const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <div className="flex items-center justify-center gap-2 my-4">
+    <div className="search-bar">
       <input
         type="text"
         placeholder="Enter Order Number"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="border border-gray-300 rounded-lg px-4 py-2 w-80 focus:ring-2 focus:ring-blue-500"
+        className="search-input"
       />
       <button
         onClick={handleSearch}
-        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+        className="search-button"
       >
         Search
       </button>

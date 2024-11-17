@@ -1,0 +1,29 @@
+.dashboard {
+  padding: 32px;
+  background-color: #f7fafc;
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  color: #2d3748;
+  margin-bottom: 32px;
+}
+
+.error-message {
+  text-align: center;
+  color: #e53e3e;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.logo {
+  width: 120px; /* Adjust the size as needed */
+  height: auto;
+}
