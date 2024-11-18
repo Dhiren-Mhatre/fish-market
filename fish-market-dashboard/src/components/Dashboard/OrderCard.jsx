@@ -30,50 +30,80 @@ const OrderCard = ({ order, refreshOrders }) => {
     <div className="order-card">
       <h3 className="order-header">Order #{order.orderNumber || "N/A"}</h3>
       <div className="order-details">
-        <p>
-          <span className="detail-label">Customer:</span>{" "}
-          {order.customerName || "N/A"}
-        </p>
-        <p>
-          <span className="detail-label">Phone:</span> {order.phone || "N/A"}
-        </p>
-        <p>
-          <span className="detail-label">Type:</span> {order.type || "N/A"}
-        </p>
-        <p>
-          <span className="detail-label">Order Date:</span>{" "}
-          {order.orderDate
-            ? new Date(order.orderDate).toLocaleDateString()
-            : "N/A"}
-        </p>
+  <p>
+    <span className="detail-label">Customer:</span> {order.customerName || "N/A"}
+  </p>
+  <p>
+    <span className="detail-label">Phone:</span> {order.phone || "N/A"}
+  </p>
+  <p>
+    <span className="detail-label">Mobile:</span> {order.mobile || "N/A"}
+  </p>
+  <p>
+    <span className="detail-label">Event:</span> {order.type || "N/A"}
+  </p>
+  <p>
+    <span className="detail-label">Order Date:</span>{" "}
+    {order.orderDate ? new Date(order.orderDate).toLocaleDateString() : "N/A"}
+  </p>
+</div>
+
+
+
+      
+      <h4 className="items-header">Items:</h4>
+      <table className="item-table">
+        <thead>
+          <tr>
+            <th>Item Name</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+            <th>Price</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {(order.items || []).map((item, index) => (
+            <tr key={index}>
+              <td>{item.itemName}</td>
+              <td>{item.quantity || 0}</td>
+              <td>{item.unit || "unit"}</td>
+              <td>${item.price || 0.0}</td>
+              <td>${(item.quantity || 0) * (item.price || 0.0)}</td>
+            </tr>
+          ))}
+          <tr>
+            <td colSpan="4" style={{ textAlign: "left" }}>
+              Packing Fee
+            </td>
+            <td>$10</td>
+          </tr>
+          <tr>
+            <td colSpan="4" style={{ textAlign: "left" }}>
+              Total
+            </td>
+            <td>${order.total || 0.0}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div className="status-section">
+        <label htmlFor="status" className="status-label">
+          Status:
+        </label>
+        <select
+          id="status"
+          value={status}
+          onChange={handleStatusChange}
+          className="status-select small-dropdown"
+        >
+          {statusOptions.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
       </div>
 
-      <label htmlFor="status" className="status-label">
-        Status:
-      </label>
-      <select
-        id="status"
-        value={status}
-        onChange={handleStatusChange}
-        className="status-select"
-      >
-        {statusOptions.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-
-      <h4 className="items-header">Items:</h4>
-      <ul className="item-list">
-        {(order.items || []).map((item, index) => (
-          <li key={index} className="item">
-            {item.itemName} - {item.quantity || 0} {item.unit || "unit"} @ $
-            {item.price || 0.0}
-          </li>
-        ))}
-      </ul>
-      <p className="total-price">Total: ${order.total || 0.0}</p>
     </div>
   );
 };
