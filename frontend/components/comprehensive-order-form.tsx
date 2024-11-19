@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import axios from "axios";
 import Logo from "@/components/logo.png";
+import {Banner} from "@/components/Banner";
 const generateOrderNumber = () =>
   Math.floor(10000 + Math.random() * 90000).toString();
 
@@ -44,6 +45,7 @@ interface Item {
   isActive: boolean;
   unit: string;
   price?: number;
+  img?: string; // Assuming image URL comes from backend
 }
 
 interface Category {
@@ -62,41 +64,36 @@ export function ComprehensiveOrderForm() {
   const [xmasChecked, setXmasChecked] = useState(false);
   const [nyeChecked, setNyeChecked] = useState(false);
   const [isOrderSubmitted, setIsOrderSubmitted] = useState(false);
-  const [phone, setPhone] = useState("")
-  const [mobile, setMobile] = useState("")
-  const [phoneError, setPhoneError] = useState(false)
-  const [mobileError, setMobileError] = useState(false)
+  const [phone, setPhone] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [phoneError, setPhoneError] = useState(false);
+  const [mobileError, setMobileError] = useState(false);
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, "")
-    setPhone(value)
-    setPhoneError(value.length !== 10 && value.length > 0)
-  }
+    const value = e.target.value.replace(/\D/g, "");
+    setPhone(value);
+    setPhoneError(value.length !== 10 && value.length > 0);
+  };
 
   const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, "")
-    setMobile(value)
-    setMobileError(value.length !== 10 && value.length > 0)
-  }
+    const value = e.target.value.replace(/\D/g, "");
+    setMobile(value);
+    setMobileError(value.length !== 10 && value.length > 0);
+  };
 
   const handlePhoneBlur = () => {
     if (phone.length !== 10 && phone.length > 0) {
-       
       const phoneInput = document.getElementById("phone") as HTMLInputElement;
       phoneInput.focus();
     }
-  }
-  
+  };
+
   const handleMobileBlur = () => {
     if (mobile.length !== 10 && mobile.length > 0) {
-       
       const mobileInput = document.getElementById("mobile") as HTMLInputElement;
-    mobileInput.focus();
+      mobileInput.focus();
     }
-  }
-  
-
-  
+  };
 
   const handleXmasChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setXmasChecked(e.target.checked);
@@ -107,7 +104,7 @@ export function ComprehensiveOrderForm() {
     setNyeChecked(e.target.checked);
     if (e.target.checked) setXmasChecked(false);
   };
-
+  const activeEvent = xmasChecked ? "XMAS" : nyeChecked ? "NYE" : null;
   useEffect(() => {
     const fetchInitialData = async () => {
       const today = new Date().toISOString().split("T")[0];
@@ -271,14 +268,14 @@ export function ComprehensiveOrderForm() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-blue-200  space-y-8">
+    <div className="max-w-7xl mx-auto p-6  space-y-8">
       <div className="border rounded-lg p-6">
         <div className="flex justify-center mb-6">
           <Image
             src={Logo} // Path relative to the 'public' directory
             alt="Logo"
-            width={150} // Adjust width as needed
-            height={150} // Adjust height as needed
+            width={200} // Adjust width as needed
+            height={200} // Adjust height as needed
             priority // Ensures the logo is loaded quickly
           />
         </div>
@@ -317,41 +314,41 @@ export function ComprehensiveOrderForm() {
               <Input id="customer-name" className="w-full" />
             </div>
             <div>
-            <Label htmlFor="phone">Phone</Label>
-        <Input
-          id="phone"
-          type="text"
-          value={phone}
-          maxLength={10}
-          onChange={handlePhoneChange}
-          onBlur={handlePhoneBlur}
-          className={`w-full ${phoneError ? "border-red-500" : ""}`}
-        />
-        {phoneError && (
-          <p className="text-red-500 text-sm mt-1">
-            Phone number must be exactly 10 digits.
-          </p>
-        )}
+              <Label htmlFor="phone">Phone</Label>
+              <Input
+                id="phone"
+                type="text"
+                value={phone}
+                maxLength={10}
+                onChange={handlePhoneChange}
+                onBlur={handlePhoneBlur}
+                className={`w-full ${phoneError ? "border-red-500" : ""}`}
+              />
+              {phoneError && (
+                <p className="text-red-500 text-sm mt-1">
+                  Phone number must be exactly 10 digits.
+                </p>
+              )}
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-            <Label htmlFor="mobile">Mobile</Label>
-        <Input
-          id="mobile"
-          type="text"
-          value={mobile}
-          maxLength={10}
-          onChange={handleMobileChange}
-          onBlur={handleMobileBlur}
-          className={`w-full ${mobileError ? "border-red-500" : ""}`}
-        />
-        {mobileError && (
-          <p className="text-red-500 text-sm mt-1">
-            Mobile number must be exactly 10 digits.
-          </p>
-        )}
+              <Label htmlFor="mobile">Mobile</Label>
+              <Input
+                id="mobile"
+                type="text"
+                value={mobile}
+                maxLength={10}
+                onChange={handleMobileChange}
+                onBlur={handleMobileBlur}
+                className={`w-full ${mobileError ? "border-red-500" : ""}`}
+              />
+              {mobileError && (
+                <p className="text-red-500 text-sm mt-1">
+                  Mobile number must be exactly 10 digits.
+                </p>
+              )}
             </div>
             <div>
               <Label>Pick up Time</Label>
@@ -370,73 +367,107 @@ export function ComprehensiveOrderForm() {
               />
             </div>
           </div>
-
+          <Banner eventType={activeEvent} />
           <Separator />
-
           {categories
             .filter((category) => category.isActive)
             .map((category) => (
               <div key={category._id} className="space-y-4">
                 <h3 className="font-bold text-xl">{category.categoryName}</h3>
-                {category.items
-                  .filter((item) => item.isActive)
-                  .map((item) => (
-                    <div
-                      key={item._id}
-                      className="flex flex-wrap items-center gap-2 sm:gap-4"
-                    >
-                      <Label className="w-full sm:w-auto text-lg flex-shrink-0 sm:flex-grow">
-                        {item.itemName}
-                      </Label>
-                      <div className="flex items-center gap-2 flex-grow sm:flex-grow-0">
-                        <Input
-                          className="w-20"
-                          placeholder="Quantity"
-                          type="number"
-                          onChange={(e) =>
-                            handleItemChange(
-                              category.categoryName,
-                              item.itemName,
-                              parseInt(e.target.value, 10) || 0,
-                              item.price || 0, // Pass the backend-provided price
-                              false,
-                              item.unit
-                            )
-                          }
-                        /><span className="text-lg">{item.unit}</span>
-                      
-                      </div>
-                      <span className="text-black-800 font-bold whitespace-nowrap">
-                          ${item.price || 0}
-                        </span>
-                      {category.categoryName === "CRUSTACEANS" && (
-                        <div className="flex items-center gap-2 ml-auto sm:ml-0">
-                          <Label className="mr-2 whitespace-nowrap">
-                            Cut Wanted
-                          </Label>
-                          <input
-                            type="checkbox"
-                            onChange={(e) =>
-                              handleItemChange(
-                                category.categoryName,
-                                item.itemName,
-                                orderItems[category.categoryName]?.[
-                                  item.itemName
-                                ]?.quantity || 0,
-                                10,
-                                e.target.checked,
-                                item.unit
-                              )
-                            }
-                            checked={
-                              orderItems[category.categoryName]?.[item.itemName]
-                                ?.cutWanted || false
-                            }
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {category.items
+                    .filter((item) => item.isActive)
+                    .map((item) => (
+                      <div key={item._id} className="card p-4 border    rounded-lg shadow-md">
+                      <div className="flex flex-col items-center">
+                        {/* Image */}
+                        <div className="w-full h-48 mb-4 relative">
+                          <Image
+                            src={item.img || "/placeholder-image.jpg"}
+                            alt={item.itemName}
+                            layout="fill"
+                            objectFit="cover"
+                            className="rounded-lg"
                           />
                         </div>
-                      )}
+                        <div className="flex flex-col items-center text-center">
+                          {/* Item Name */}
+                          <h4 className="text-lg font-semibold">{item.itemName}</h4>
+                          <span className="text-sm text-gray-600">{item.unit}</span>
+                          <div className="flex items-center gap-4 mt-2">
+                            {/* Quantity Controls */}
+                            <button
+                              onClick={() =>
+                                handleItemChange(
+                                  category.categoryName,
+                                  item.itemName,
+                                  Math.max(
+                                    (orderItems[category.categoryName]?.[item.itemName]?.quantity || 0) - 1,
+                                    0
+                                  ),
+                                  item.price || 0,
+                                  false,
+                                  item.unit
+                                )
+                              }
+                              className="px-3 py-1 bg-blue-300 text-white rounded hover:bg-red-600"
+                            >
+                              -
+                            </button>
+                            <Input
+                              className="w-16 text-center border rounded"
+                              type="number"
+                              min={0}
+                              value={
+                                orderItems[category.categoryName]?.[item.itemName]?.quantity || 0
+                              }
+                              readOnly
+                            />
+                            <button
+                              onClick={() =>
+                                handleItemChange(
+                                  category.categoryName,
+                                  item.itemName,
+                                  (orderItems[category.categoryName]?.[item.itemName]?.quantity || 0) + 1,
+                                  item.price || 0,
+                                  false,
+                                  item.unit
+                                )
+                              }
+                              className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                            >
+                              +
+                            </button>
+                          </div>
+                          <span className="text-lg font-bold mt-2">${item.price || 0}</span>
+                          {/* Crustaceans specific checkbox */}
+                          {category.categoryName === "CRUSTACEANS" && (
+                            <div className="flex items-center gap-2 mt-2">
+                              <Label className="mr-2">Cut Wanted</Label>
+                              <input
+                                type="checkbox"
+                                onChange={(e) =>
+                                  handleItemChange(
+                                    category.categoryName,
+                                    item.itemName,
+                                    orderItems[category.categoryName]?.[item.itemName]?.quantity || 0,
+                                    item.price || 0,
+                                    e.target.checked,
+                                    item.unit
+                                  )
+                                }
+                                checked={
+                                  orderItems[category.categoryName]?.[item.itemName]?.cutWanted || false
+                                }
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  ))}
+                    
+                    ))}
+                </div>
               </div>
             ))}
 
@@ -583,6 +614,21 @@ export function ComprehensiveOrderForm() {
             {/* Media Query for Small Devices */}
             <style>
               {`
+              .card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  transition: background-color 0.2s, transform 0.2s;
+}
+button:hover {
+  transform: translateY(-2px);
+}
+
       @media (max-width: 640px) {
         h4 {
           font-size: 1rem;

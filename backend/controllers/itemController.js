@@ -13,7 +13,7 @@ export const getItem = async (req, res) => {
 
 export const updateItem = async (req, res) => {
   const { id } = req.params;
-  const { order, unit, price } = req.body;
+  const { order, unit, price, img } = req.body; // Include img in destructuring
 
   try {
     const item = await Item.findById(id);
@@ -31,6 +31,7 @@ export const updateItem = async (req, res) => {
     }
 
     if (unit) item.unit = unit; // Update unit if provided
+    if (img) item.img = img;   // Update img if provided
     Object.assign(item, req.body);
     await item.save();
 
@@ -39,6 +40,7 @@ export const updateItem = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 export const deleteItem = async (req, res) => {
   const { id } = req.params;
@@ -58,7 +60,7 @@ export const deleteItem = async (req, res) => {
 };
 export const createItem = async (req, res) => {
   try {
-    const { order, unit, price } = req.body;
+    const { order, unit, price, img } = req.body; // Include img in destructuring
 
     if (!price) return res.status(400).json({ message: "Price is required" });
 
@@ -69,7 +71,7 @@ export const createItem = async (req, res) => {
       );
     }
 
-    const item = new Item({ ...req.body, order: order || 1 });
+    const item = new Item({ ...req.body, order: order || 1, img }); // Save img
     await item.save();
 
     res.status(201).json(item);
@@ -77,6 +79,7 @@ export const createItem = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 export const getAllItems = async (req, res) => {
   try {

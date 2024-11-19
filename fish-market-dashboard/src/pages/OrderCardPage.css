@@ -1,0 +1,48 @@
+.order-card-page {
+  padding: 20px;
+}
+
+.home-button {
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.home-button:hover {
+  background-color: #0056b3;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .order-card-page {
+    padding: 15px;
+  }
+
+  .home-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .search-bar {
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-card-page {
+    padding: 10px;
+  }
+
+  .home-button {
+    font-size: 12px;
+  }
+}

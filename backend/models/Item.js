@@ -7,7 +7,8 @@ const itemSchema = new mongoose.Schema({
   lastUpdated: { type: Date, default: Date.now },
   isActive: { type: Boolean, default: true },
   unit: { type: String, required: true },
-  price: { type: Number, required: true }, // New field for price
+  price: { type: Number, required: true }, // Price field
+  img: { type: String, required: false }, // New field for image URL
 });
 
 itemSchema.pre('save', function (next) {
