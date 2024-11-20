@@ -508,7 +508,6 @@ export function ComprehensiveOrderForm() {
   ))}
 
           <Separator />
-
           <div>
             <Label htmlFor="special">Special Requests</Label>
             <Input id="special" className="mt-2 w-full" />
@@ -521,140 +520,157 @@ export function ComprehensiveOrderForm() {
           <Separator />
 
           <Card
-  style={{
-    margin: "1rem",
-    padding: "1rem",
-    border: "1px solid #ddd",
-    borderRadius: "0.5rem",
-    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-  }}
->
-  <CardHeader>
-    <CardTitle
-      style={{
-        fontSize: "1.5rem",
-        fontWeight: "bold",
-        textAlign: "center",
-        marginBottom: "1rem",
-      }}
-    >
-      Order Summary
-    </CardTitle>
-  </CardHeader>
-  <CardContent>
-    {isOrderSubmitted && (
-      <div
-        style={{
-          marginBottom: "1rem",
-          fontWeight: "600",
-          textAlign: "center",
-          fontSize: "1rem",
-        }}
-      >
-        <span>Order Number: {orderNumber}</span>
-      </div>
-    )}
-    {Object.entries(orderItems).map(([category, items]) => (
-      <div key={category} style={{ marginBottom: "1rem" }}>
-        <h4
-          style={{
-            fontWeight: "600",
-            fontSize: "1.125rem",
-            marginBottom: "0.5rem",
-          }}
-        >
-          {category}
-        </h4>
-        {Object.entries(items)
-      .filter(([_, details]) => details.quantity > 0) // Filter out items with quantity 0
-      .map(([item, details]) => (
-          <div
-            key={item}
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              fontSize: "0.875rem",
-              padding: "0.5rem 0",
-              borderBottom: "1px solid #ddd",
+              margin: "1rem",
+              padding: "1rem",
+              border: "1px solid #ddd",
+              borderRadius: "0.5rem",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
             }}
           >
-            <span style={{ flex: 2 }}>{item}</span>
-             {details.cutWanted && (
-              <span
+            <CardHeader>
+              <CardTitle
                 style={{
-                   
-                  textAlign: "left",
-                  color: "#16a34a",
+                  fontSize: "1.5rem",
+                  fontWeight: "bold",
+                  textAlign: "center",
+                  marginBottom: "1rem",
                 }}
               >
-                (Cut Wanted)
-              </span>
-            )}
-            <span  style={{ 
-    flex: 1, 
-    textAlign: "center", 
-    transform: "translateX(-50px)" 
-  }}>
-              {details.quantity} {details.unit} - $
-              {details.quantity * details.price}
-            </span>
-           
-          </div>
-        ))}
-      </div>
-    ))}
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        fontWeight: "600",
-        marginBottom: "0.5rem",
-        fontSize: "0.875rem",
-      }}
-    >
-      <span>Packaging Fee</span>
-      <span>$10</span>
-    </div>
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        fontWeight: "700",
-        fontSize: "1rem",
-        marginTop: "0.5rem",
-      }}
-    >
-      <span>Total</span>
-      <span>${calculateTotal().toFixed(2)}</span>
-    </div>
-  </CardContent>
-  <CardFooter
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      gap: "1rem",
-      marginTop: "1rem",
-    }}
-  >
-    <Button
-      onClick={handleSubmit}
-      style={{
-        padding: "0.5rem 1rem",
-        backgroundColor: "#2563eb",
-        color: "white",
-        fontSize: "1rem",
-        fontWeight: "600",
-        borderRadius: "0.375rem",
-        border: "none",
-        textAlign: "center",
-      }}
-    >
-      Submit Order
-    </Button>
-  </CardFooter>
+                Order Summary
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isOrderSubmitted && (
+                <div
+                  style={{
+                    marginBottom: "1rem",
+                    fontWeight: "600",
+                    textAlign: "center",
+                    fontSize: "1rem",
+                  }}
+                >
+                  <span>Order Number: {orderNumber}</span>
+                </div>
+              )}
+              {Object.entries(orderItems)
+  .filter(([_, items]) => 
+    Object.values(items).some(details => details.quantity > 0) // Check if any item in the category has a quantity > 0
+  )
+  .map(([category, items]) => (
+    <div key={category} style={{ marginBottom: "1rem" }}>
+      <h4
+        style={{
+          fontWeight: "600",
+          fontSize: "1.125rem",
+          marginBottom: "0.5rem",
+        }}
+      >
+        {category}
+      </h4>
+      {Object.entries(items)
+        .filter(([_, details]) => details.quantity > 0) // Filter out items with quantity 0
+        .map(([item, details]) => (
+                    <div
+                      key={item}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        fontSize: "0.875rem",
+                        padding: "0.5rem 0",
+                        borderBottom: "1px solid #ddd",
+                      }}
+                    ><div className="flex flex-col">
+                      <span style={{ flex: 1 }}>{item}</span>
+                      {details.cutWanted && (
+                        <span
+                          style={{
+                            flex: 1,
+                            textAlign: "right",
+                            color: "#16a34a",
+                          }}
+                        >
+                          (Cut Wanted)
+                        </span>
+                      )}
+                      </div>
+                      <span style={{ flex: 1, textAlign: "center" }}>
+                        {details.quantity} {details.unit} - $
+                        {details.quantity * details.price}
+                      </span>
+                      
+                    </div>
+                  ))}
+                </div>
+              ))}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontWeight: "600",
+                  marginBottom: "0.5rem",
+                  fontSize: "0.875rem",
+                }}
+              >
+                <span>Packaging Fee</span>
+                <span>$10</span>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontWeight: "700",
+                  fontSize: "1rem",
+                  marginTop: "0.5rem",
+                }}
+              >
+                <span>Total</span>
+                <span>${calculateTotal().toFixed(2)}</span>
+              </div>
+            </CardContent>
+            <CardFooter
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+                marginTop: "1rem",
+              }}
+            >
+              <Button
+                onClick={handleSubmit}
+                style={{
+                  padding: "0.5rem 1rem",
+                  backgroundColor: "#2563eb",
+                  color: "white",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  borderRadius: "0.375rem",
+                  border: "none",
+                  textAlign: "center",
+                }}
+              >
+                Submit Order
+              </Button>
+            </CardFooter>
 
-</Card>
+            {/* Media Query for Small Devices */}
+            <style>
+              {`
+      @media (max-width: 640px) {
+        h4 {
+          font-size: 1rem;
+        }
+        div {
+          font-size: 0.75rem;
+        }
+        button {
+          font-size: 0.875rem;
+        }
+      }
+    `}
+            </style>
+          </Card>
   {/* Media Query for Small Devices */}
   <style>
     {`
