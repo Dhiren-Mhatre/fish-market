@@ -51,7 +51,7 @@ Ring in the New Year with the freshest seafood to make your celebration unforget
   };
 
   return (
-    <div className="relative w-full h-96">
+    <div className="relative  mt-3 pb-3 w-full h-96">
       <Image
         src={Logo}
         alt="Event Banner"

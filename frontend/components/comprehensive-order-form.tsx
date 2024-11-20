@@ -15,7 +15,8 @@ import {
 } from "@/components/ui/card";
 import axios from "axios";
 import Logo from "@/components/logo.png";
-import {Banner} from "@/components/Banner";
+import { Banner } from "@/components/Banner";
+import Sea from "@/components/sea.webp";
 const generateOrderNumber = () =>
   Math.floor(10000 + Math.random() * 90000).toString();
 
@@ -268,208 +269,242 @@ export function ComprehensiveOrderForm() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6  space-y-8">
-      <div className="border rounded-lg p-6">
+    <div className="  mx-auto   space-y-8">
+      <div className="border rounded-lg  ">
         <div className="flex justify-center mb-6">
-          <Image
-            src={Logo} // Path relative to the 'public' directory
-            alt="Logo"
-            width={200} // Adjust width as needed
-            height={200} // Adjust height as needed
-            priority // Ensures the logo is loaded quickly
-          />
-        </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">ORDER FORM</h1>
-          <div className="flex items-center gap-4 mt-4 sm:mt-0">
-            <div className="flex items-center gap-2">
-              <Label htmlFor="xmas" className="font-bold">
-                XMAS
-              </Label>
-              <input
-                type="checkbox"
-                id="xmas"
-                checked={xmasChecked}
-                onChange={handleXmasChange}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <Label htmlFor="nye" className="font-bold">
-                NYE
-              </Label>
-              <input
-                type="checkbox"
-                id="nye"
-                checked={nyeChecked}
-                onChange={handleNyeChange}
+          <div className="relative w-full">
+            <Image
+              src={Sea}
+              alt="Sea"
+              className="w-full object-cover"
+              style={{ height: "200px" }} // Adjust height as needed
+              priority
+            />
+            <div
+              className="absolute inset-0 flex items-center justify-center"
+              style={{ height: "200px" }} // Match the image height
+            >
+              <Image
+                src={Logo}
+                alt="Logo"
+                width={150} // Adjust width as needed
+                height={100} // Adjust height as needed
+                priority
               />
             </div>
           </div>
         </div>
-
-        <div className="grid gap-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="customer-name">Customer Name</Label>
-              <Input id="customer-name" className="w-full" />
-            </div>
-            <div>
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
-                type="text"
-                value={phone}
-                maxLength={10}
-                onChange={handlePhoneChange}
-                onBlur={handlePhoneBlur}
-                className={`w-full ${phoneError ? "border-red-500" : ""}`}
-              />
-              {phoneError && (
-                <p className="text-red-500 text-sm mt-1">
-                  Phone number must be exactly 10 digits.
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="mobile">Mobile</Label>
-              <Input
-                id="mobile"
-                type="text"
-                value={mobile}
-                maxLength={10}
-                onChange={handleMobileChange}
-                onBlur={handleMobileBlur}
-                className={`w-full ${mobileError ? "border-red-500" : ""}`}
-              />
-              {mobileError && (
-                <p className="text-red-500 text-sm mt-1">
-                  Mobile number must be exactly 10 digits.
-                </p>
-              )}
-            </div>
-            <div>
-              <Label>Pick up Time</Label>
-              <Input
-                readOnly
-                defaultValue="10am till 1pm"
-                className="bg-gray-200 cursor-not-allowed w-full"
-              />
-            </div>
-            <div>
-              <Label>Date</Label>
-              <Input
-                readOnly
-                value={date}
-                className="bg-gray-200 cursor-not-allowed w-full"
-              />
+        <div className="p-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold">ORDER FORM</h1>
+            <div className="flex items-center gap-4 mt-4 sm:mt-0">
+              <div className="flex items-center gap-2">
+                <Label htmlFor="xmas" className="font-bold">
+                  XMAS
+                </Label>
+                <input
+                  type="checkbox"
+                  id="xmas"
+                  checked={xmasChecked}
+                  onChange={handleXmasChange}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="nye" className="font-bold">
+                  NYE
+                </Label>
+                <input
+                  type="checkbox"
+                  id="nye"
+                  checked={nyeChecked}
+                  onChange={handleNyeChange}
+                />
+              </div>
             </div>
           </div>
-          <Banner eventType={activeEvent} />
+
+          <div className="grid gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="customer-name">Customer Name</Label>
+                <Input id="customer-name" className="w-full" />
+              </div>
+              <div>
+                <Label htmlFor="phone">Phone</Label>
+                <Input
+                  id="phone"
+                  type="text"
+                  value={phone}
+                  maxLength={10}
+                  onChange={handlePhoneChange}
+                  onBlur={handlePhoneBlur}
+                  className={`w-full ${phoneError ? "border-red-500" : ""}`}
+                />
+                {phoneError && (
+                  <p className="text-red-500 text-sm mt-1">
+                    Phone number must be exactly 10 digits.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="mobile">Mobile</Label>
+                <Input
+                  id="mobile"
+                  type="text"
+                  value={mobile}
+                  maxLength={10}
+                  onChange={handleMobileChange}
+                  onBlur={handleMobileBlur}
+                  className={`w-full ${mobileError ? "border-red-500" : ""}`}
+                />
+                {mobileError && (
+                  <p className="text-red-500 text-sm mt-1">
+                    Mobile number must be exactly 10 digits.
+                  </p>
+                )}
+              </div>
+              <div>
+                <Label>Pick up Time</Label>
+                <Input
+                  readOnly
+                  defaultValue="10am till 1pm"
+                  className="bg-gray-200 cursor-not-allowed w-full"
+                />
+              </div>
+              <div>
+                <Label>Date</Label>
+                <Input
+                  readOnly
+                  value={date}
+                  className="bg-gray-200 cursor-not-allowed w-full"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <Banner eventType={activeEvent} />
+        <div className="grid gap-6 m-2">
           <Separator />
           {categories
-            .filter((category) => category.isActive)
-            .map((category) => (
-              <div key={category._id} className="space-y-4">
-                <h3 className="font-bold text-xl">{category.categoryName}</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {category.items
-                    .filter((item) => item.isActive)
-                    .map((item) => (
-                      <div key={item._id} className="card p-4 border    rounded-lg shadow-md">
-                      <div className="flex flex-col items-center">
-                        {/* Image */}
-                        <div className="w-full h-48 mb-4 relative">
-                          <Image
-                            src={item.img || "/placeholder-image.jpg"}
-                            alt={item.itemName}
-                            layout="fill"
-                            objectFit="cover"
-                            className="rounded-lg"
-                          />
-                        </div>
-                        <div className="flex flex-col items-center text-center">
-                          {/* Item Name */}
-                          <h4 className="text-lg font-semibold">{item.itemName}</h4>
-                          <span className="text-sm text-gray-600">{item.unit}</span>
-                          <div className="flex items-center gap-4 mt-2">
-                            {/* Quantity Controls */}
-                            <button
-                              onClick={() =>
-                                handleItemChange(
-                                  category.categoryName,
-                                  item.itemName,
-                                  Math.max(
-                                    (orderItems[category.categoryName]?.[item.itemName]?.quantity || 0) - 1,
-                                    0
-                                  ),
-                                  item.price || 0,
-                                  false,
-                                  item.unit
-                                )
-                              }
-                              className="px-3 py-1 bg-blue-300 text-white rounded hover:bg-red-600"
-                            >
-                              -
-                            </button>
-                            <Input
-                              className="w-16 text-center border rounded"
-                              type="number"
-                              min={0}
-                              value={
-                                orderItems[category.categoryName]?.[item.itemName]?.quantity || 0
-                              }
-                              readOnly
-                            />
-                            <button
-                              onClick={() =>
-                                handleItemChange(
-                                  category.categoryName,
-                                  item.itemName,
-                                  (orderItems[category.categoryName]?.[item.itemName]?.quantity || 0) + 1,
-                                  item.price || 0,
-                                  false,
-                                  item.unit
-                                )
-                              }
-                              className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-                            >
-                              +
-                            </button>
-                          </div>
-                          <span className="text-lg font-bold mt-2">${item.price || 0}</span>
-                          {/* Crustaceans specific checkbox */}
-                          {category.categoryName === "CRUSTACEANS" && (
-                            <div className="flex items-center gap-2 mt-2">
-                              <Label className="mr-2">Cut Wanted</Label>
-                              <input
-                                type="checkbox"
-                                onChange={(e) =>
-                                  handleItemChange(
-                                    category.categoryName,
-                                    item.itemName,
-                                    orderItems[category.categoryName]?.[item.itemName]?.quantity || 0,
-                                    item.price || 0,
-                                    e.target.checked,
-                                    item.unit
-                                  )
-                                }
-                                checked={
-                                  orderItems[category.categoryName]?.[item.itemName]?.cutWanted || false
-                                }
-                              />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    ))}
-                </div>
+  .filter((category) => category.isActive)
+  .map((category) => (
+    <div key={category._id} className="space-y-6">
+      <h3 className="font-bold text-xl">{category.categoryName}</h3>
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        {category.items
+          .filter((item) => item.isActive)
+          .map((item) => (
+            <div
+              key={item._id}
+              className="card border rounded-lg shadow-md p-4 flex flex-col items-center space-y-4"
+            >
+              {/* Image */}
+              <div className="relative w-full h-40">
+                <Image
+                  src={item.img || "/placeholder-image.jpg"}
+                  alt={item.itemName}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-md"
+                />
               </div>
-            ))}
+
+              {/* Item Name and Price */}
+              <div className="text-center">
+                <h4 className="text-lg font-semibold">{item.itemName}</h4>
+                <span className="text-lg font-bold text-gray-700">
+                  ${item.price || 0}
+                </span>
+              </div>
+
+              {/* Quantity and Unit */}
+              <div className="flex items-center justify-center space-x-2">
+                <button
+                  onClick={() =>
+                    handleItemChange(
+                      category.categoryName,
+                      item.itemName,
+                      Math.max(
+                        (orderItems[category.categoryName]?.[item.itemName]
+                          ?.quantity || 0) - 1,
+                        0
+                      ),
+                      item.price || 0,
+                      false,
+                      item.unit
+                    )
+                  }
+                  className="px-3 py-1 bg-blue-300 text-white rounded hover:bg-red-600"
+                >
+                  -
+                </button>
+
+                <div className="flex items-center border rounded w-24 px-2">
+                  <input
+                    className="w-full text-center outline-none"
+                    type="number"
+                    min={0}
+                    value={
+                      orderItems[category.categoryName]?.[item.itemName]
+                        ?.quantity || 0
+                    }
+                    readOnly
+                  />
+                  <span className="ml-1 text-sm text-gray-600">
+                    {item.unit}
+                  </span>
+                </div>
+
+                <button
+                  onClick={() =>
+                    handleItemChange(
+                      category.categoryName,
+                      item.itemName,
+                      (orderItems[category.categoryName]?.[item.itemName]
+                        ?.quantity || 0) + 1,
+                      item.price || 0,
+                      false,
+                      item.unit
+                    )
+                  }
+                  className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                >
+                  +
+                </button>
+              </div>
+
+              {/* Crustaceans specific checkbox */}
+              {category.categoryName === "CRUSTACEANS" && (
+                <div className="flex items-center gap-2 mt-2">
+                  <Label className="text-sm">Cut Wanted</Label>
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      handleItemChange(
+                        category.categoryName,
+                        item.itemName,
+                        orderItems[category.categoryName]?.[item.itemName]
+                          ?.quantity || 0,
+                        item.price || 0,
+                        e.target.checked,
+                        item.unit
+                      )
+                    }
+                    checked={
+                      orderItems[category.categoryName]?.[item.itemName]
+                        ?.cutWanted || false
+                    }
+                  />
+                </div>
+              )}
+            </div>
+          ))}
+      </div>
+    </div>
+  ))}
 
           <Separator />
 
@@ -485,149 +520,151 @@ export function ComprehensiveOrderForm() {
           <Separator />
 
           <Card
+  style={{
+    margin: "1rem",
+    padding: "1rem",
+    border: "1px solid #ddd",
+    borderRadius: "0.5rem",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+  }}
+>
+  <CardHeader>
+    <CardTitle
+      style={{
+        fontSize: "1.5rem",
+        fontWeight: "bold",
+        textAlign: "center",
+        marginBottom: "1rem",
+      }}
+    >
+      Order Summary
+    </CardTitle>
+  </CardHeader>
+  <CardContent>
+    {isOrderSubmitted && (
+      <div
+        style={{
+          marginBottom: "1rem",
+          fontWeight: "600",
+          textAlign: "center",
+          fontSize: "1rem",
+        }}
+      >
+        <span>Order Number: {orderNumber}</span>
+      </div>
+    )}
+    {Object.entries(orderItems).map(([category, items]) => (
+      <div key={category} style={{ marginBottom: "1rem" }}>
+        <h4
+          style={{
+            fontWeight: "600",
+            fontSize: "1.125rem",
+            marginBottom: "0.5rem",
+          }}
+        >
+          {category}
+        </h4>
+        {Object.entries(items).map(([item, details]) => (
+          <div
+            key={item}
             style={{
-              margin: "1rem",
-              padding: "1rem",
-              border: "1px solid #ddd",
-              borderRadius: "0.5rem",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              fontSize: "0.875rem",
+              padding: "0.5rem 0",
+              borderBottom: "1px solid #ddd",
             }}
           >
-            <CardHeader>
-              <CardTitle
+            <span style={{ flex: 2 }}>{item}</span>
+             {details.cutWanted && (
+              <span
                 style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "bold",
-                  textAlign: "center",
-                  marginBottom: "1rem",
+                   
+                  textAlign: "left",
+                  color: "#16a34a",
                 }}
               >
-                Order Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isOrderSubmitted && (
-                <div
-                  style={{
-                    marginBottom: "1rem",
-                    fontWeight: "600",
-                    textAlign: "center",
-                    fontSize: "1rem",
-                  }}
-                >
-                  <span>Order Number: {orderNumber}</span>
-                </div>
-              )}
-              {Object.entries(orderItems).map(([category, items]) => (
-                <div key={category} style={{ marginBottom: "1rem" }}>
-                  <h4
-                    style={{
-                      fontWeight: "600",
-                      fontSize: "1.125rem",
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    {category}
-                  </h4>
-                  {Object.entries(items).map(([item, details]) => (
-                    <div
-                      key={item}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        fontSize: "0.875rem",
-                        padding: "0.5rem 0",
-                        borderBottom: "1px solid #ddd",
-                      }}
-                    >
-                      <span style={{ flex: 1 }}>{item}</span>
-                      <span style={{ flex: 1, textAlign: "center" }}>
-                        {details.quantity} {details.unit} - $
-                        {details.quantity * details.price}
-                      </span>
-                      {details.cutWanted && (
-                        <span
-                          style={{
-                            flex: 1,
-                            textAlign: "right",
-                            color: "#16a34a",
-                          }}
-                        >
-                          (Cut Wanted)
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ))}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  fontWeight: "600",
-                  marginBottom: "0.5rem",
-                  fontSize: "0.875rem",
-                }}
-              >
-                <span>Packaging Fee</span>
-                <span>$10</span>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  fontWeight: "700",
-                  fontSize: "1rem",
-                  marginTop: "0.5rem",
-                }}
-              >
-                <span>Total</span>
-                <span>${calculateTotal().toFixed(2)}</span>
-              </div>
-            </CardContent>
-            <CardFooter
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "1rem",
-                marginTop: "1rem",
-              }}
-            >
-              <Button
-                onClick={handleSubmit}
-                style={{
-                  padding: "0.5rem 1rem",
-                  backgroundColor: "#2563eb",
-                  color: "white",
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  borderRadius: "0.375rem",
-                  border: "none",
-                  textAlign: "center",
-                }}
-              >
-                Submit Order
-              </Button>
-            </CardFooter>
+                (Cut Wanted)
+              </span>
+            )}
+            <span style={{ flex: 1, textAlign: "center" }}>
+              {details.quantity} {details.unit} - $
+              {details.quantity * details.price}
+            </span>
+           
+          </div>
+        ))}
+      </div>
+    ))}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        fontWeight: "600",
+        marginBottom: "0.5rem",
+        fontSize: "0.875rem",
+      }}
+    >
+      <span>Packaging Fee</span>
+      <span>$10</span>
+    </div>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        fontWeight: "700",
+        fontSize: "1rem",
+        marginTop: "0.5rem",
+      }}
+    >
+      <span>Total</span>
+      <span>${calculateTotal().toFixed(2)}</span>
+    </div>
+  </CardContent>
+  <CardFooter
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: "1rem",
+      marginTop: "1rem",
+    }}
+  >
+    <Button
+      onClick={handleSubmit}
+      style={{
+        padding: "0.5rem 1rem",
+        backgroundColor: "#2563eb",
+        color: "white",
+        fontSize: "1rem",
+        fontWeight: "600",
+        borderRadius: "0.375rem",
+        border: "none",
+        textAlign: "center",
+      }}
+    >
+      Submit Order
+    </Button>
+  </CardFooter>
 
-            {/* Media Query for Small Devices */}
-            <style>
-              {`
-              .card {
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.card:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
+</Card>
+  {/* Media Query for Small Devices */}
+  <style>
+    {`
+      .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      }
 
-button {
-  transition: background-color 0.2s, transform 0.2s;
-}
-button:hover {
-  transform: translateY(-2px);
-}
+      button {
+        transition: background-color 0.2s, transform 0.2s;
+      }
+      button:hover {
+        transform: translateY(-2px);
+      }
 
       @media (max-width: 640px) {
         h4 {
@@ -641,8 +678,7 @@ button:hover {
         }
       }
     `}
-            </style>
-          </Card>
+  </style>
         </div>
       </div>
     </div>
