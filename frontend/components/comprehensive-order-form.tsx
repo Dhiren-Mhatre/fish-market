@@ -17,6 +17,7 @@ import axios from "axios";
 import Logo from "@/components/logo.png";
 import { Banner } from "@/components/Banner";
 import Sea from "@/components/sea.webp";
+import { X } from "lucide-react";
 const generateOrderNumber = () =>
   Math.floor(10000 + Math.random() * 90000).toString();
 
@@ -564,7 +565,9 @@ export function ComprehensiveOrderForm() {
         >
           {category}
         </h4>
-        {Object.entries(items).map(([item, details]) => (
+        {Object.entries(items)
+      .filter(([_, details]) => details.quantity > 0) // Filter out items with quantity 0
+      .map(([item, details]) => (
           <div
             key={item}
             style={{
@@ -588,7 +591,11 @@ export function ComprehensiveOrderForm() {
                 (Cut Wanted)
               </span>
             )}
-            <span style={{ flex: 1, textAlign: "center" }}>
+            <span  style={{ 
+    flex: 1, 
+    textAlign: "center", 
+    transform: "translateX(-50px)" 
+  }}>
               {details.quantity} {details.unit} - $
               {details.quantity * details.price}
             </span>
